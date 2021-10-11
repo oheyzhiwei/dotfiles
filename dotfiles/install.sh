@@ -7,11 +7,7 @@ if ! [ -d "$HOME/dotfiles" ]; then
     echo '======================================================='
     echo '  Installing git...'
     echo '======================================================='
-    sudo apt-get install python-software-properties
-    sudo add-apt-repository ppa:git-core/ppa
-    sudo apt-get update
     sudo apt-get install git
-    exit 0
   fi
 
   git clone --no-checkout https://github.com/zweicoder/dotfiles.git
@@ -39,7 +35,7 @@ then
   # Install zsh
   if [ -z `command -v zsh` ]; then
     echo '======================================================='
-    echo '  Installing zsh...'
+    echo '  Installing zsh... (Exit to continue installation)'
     echo '======================================================='
     sudo apt install zsh
     sudo chsh -s `which zsh`
@@ -57,9 +53,10 @@ then
   echo '  Installing fonts...'
   echo '======================================================='
   sudo apt install fonts-powerline
-  mkdir -p ~/.local/share/fonts
-  cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
-  fc-cache -fv
+  # Not sure if this is needed anymore
+  # mkdir -p ~/.local/share/fonts
+  # cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+  # fc-cache -fv
 
 
   if ! [ -d "$HOME/.nvm" ];
@@ -72,19 +69,7 @@ then
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    nvm install lts/carbon
-    nvm use lts/carbon
-    echo 'Successfully installed nvm. Make sure the bin path in ~/.zshenv is same as lts/carbon version for bins to work'
-  fi
-
-  if [ -z `command -v bat` ];
-  then
-    echo '======================================================='
-    echo '  Installing bat...'
-    echo '======================================================='
-    filename=/tmp/dotfiles/bat.deb
-    wget -qO $filename https://github.com/sharkdp/bat/releases/download/v0.6.1/bat_0.6.1_amd64.deb
-    sudo dpkg -i /tmp/dotfiles/bat.deb
+    echo 'Successfully installed nvm. Make sure the bin path in ~/.zshenv is same as node version for bins to work'
   fi
 
   if [ -z `command -v fd` ];

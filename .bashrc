@@ -197,26 +197,14 @@ export PATH=$PATH:~/idea-IU/bin
 export PATH="$HOME/.local/bin:$PATH"
 export VISUAL=vim
 export EDITOR="$VISUAL"
-
-# Remember to install powerline-fonts and then change the terminal font to Source Code Pro Semibold size 11
-function _update_ps1() {
-    PS1="$(~/.powerline-shell.py $? 2> /dev/null)"
-}
-
-if [ "$TERM" != "linux" ]; then
-    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-fi
-
 export NVM_DIR="/home/`whoami`/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
-# Use z (must come after the change in PROMPT_COMMAND for powerline
-[[ -s ~/bin/z.sh ]] && . ~/bin/z.sh
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
 
 # tmuxinator
 [[ -s ~/bin/tmuxinator.bash ]] && . ~/bin/tmuxinator.bash
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# added by Anaconda3 installer
-export PATH="/home/pewpew/anaconda3/bin:$PATH"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
