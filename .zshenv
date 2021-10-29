@@ -1,13 +1,12 @@
 export PATH=~/bin:$PATH
-export GOPATH=~/go:/media/code/go-projects
-GOPATHBINS=~/go/bin:/media/code/go-projects/bin
+# export GOPATH=~/go:/media/code/go-projects
+# GOPATHBINS=~/go/bin:/media/code/go-projects/bin
 export PATH=$PATH:$GOPATHBINS
-export PATH=$PATH:~/idea-IU/bin
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/home/czw/.pyenv/bin:$PATH"
-# added by Anaconda3 installer
-export PATH="/home/pewpew/anaconda3/bin:$PATH"
+export PATH="$HOME/Applications/android-studio/bin:$PATH"
+
+export JAVA_HOME="$HOME/Applications/android-studio/jre"
 
 # NVM
 # Hard code default to lts/carbon bin folder for spacemacs / CLI tools.

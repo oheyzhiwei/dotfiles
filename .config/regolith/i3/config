@@ -89,16 +89,6 @@ set_from_resource $ws10_key i3-wm.workspace.10.key 0
 # Launcher dialogs
 ###############################################################################
 
-# Application Mode
-# set $mode_apps "Apps: [w] web [n] terminal"
-# bindsym $mod+Shift+Return mode $mode_apps
-# mode $mode_apps {
-#   bindsym w exec gtk-launch $(xdg-settings get default-web-browser)
-
-#   bindsym Escape mode "default"
-# }
-
-
 ## Launch // Terminal // <> Enter ##
 set_from_resource $i3-wm.binding.terminal i3-wm.binding.terminal Return
 bindsym $mod+$i3-wm.binding.terminal exec /usr/bin/x-terminal-emulator
@@ -109,35 +99,37 @@ bindsym $mod+$i3-wm.binding.browser exec gtk-launch $(xdg-settings get default-w
 
 set_from_resource $rofiTheme rofi.theme /etc/regolith/styles/lascaille/rofi.rasi
 
-## Launch // Application // <> Space ##
-set_from_resource $i3-wm.binding.launcher.app i3-wm.binding.launcher.app space
+## SPC // Space Mode // <> Space ##
+set $mode_spc "[SPC] Apps [f] File [S] System [t] Theme [w] Window"
+bindsym $mod+space mode $mode_spc
+
+### [SPC] App Launcher
 set_from_resource $i3-wm.program.launcher.app i3-wm.program.launcher.app rofi -show drun -theme $rofiTheme
-bindsym $mod+$i3-wm.binding.launcher.app exec $i3-wm.program.launcher.app
 
-## Launch // Command // <><Shift> Space ##
-set_from_resource $i3-wm.binding.launcher.cmd i3-wm.binding.launcher.cmd Shift+space
-set_from_resource $i3-wm.program.launcher.cmd i3-wm.program.launcher.cmd rofi -show run -theme $rofiTheme
-bindsym $mod+$i3-wm.binding.launcher.cmd exec $i3-wm.program.launcher.cmd
+### [f] File Search
+set_from_resource $i3-wm.program.file_search i3-wm.program.file_search rofi -show find -modi find:~/.config/rofi/finder.sh
 
-## Navigate // Window by Name // <><Ctrl> Space ##
-set_from_resource $i3-wm.binding.launcher.window i3-wm.binding.launcher.window Ctrl+space
+### [w] Window Search
 set_from_resource $i3-wm.program.launcher.window i3-wm.program.launcher.window rofi -show window -theme $rofiTheme
-bindsym $mod+$i3-wm.binding.launcher.window exec $i3-wm.program.launcher.window
 
-## Launch // This Dialog // <><Shift> ? ##
+### [t] Theme Select
+set_from_resource $i3-wm.program.look_selector i3-wm.program.look_selector rofi -show look -modi look:/usr/share/rofi/modi/look-selector.sh
+
+mode $mode_spc {
+    bindsym space exec $i3-wm.program.launcher.app; mode "default"
+    bindsym f exec $i3-wm.program.file_search; mode "default"
+    bindsym t exec $i3-wm.program.look_selector; mode "default"
+    bindsym Shift+s mode $mode_sys
+    bindsym w exec $i3-wm.program.launcher.window; mode "default"
+
+    bindsym Escape mode "default"
+}
+
+## Launch // Cheatsheet // <><Shift> ? ##
 set_from_resource $i3-wm.binding.help i3-wm.binding.help Shift+question
 set_from_resource $i3-wm.program.help i3-wm.program.help /usr/bin/remontoire-toggle
 bindsym $mod+$i3-wm.binding.help exec --no-startup-id $i3-wm.program.help
 
-## Launch // File Search // <><Alt> Space ##
-set_from_resource $i3-wm.binding.file_search i3-wm.binding.file_search Mod1+space
-set_from_resource $i3-wm.program.file_search i3-wm.program.file_search rofi -show find -modi find:~/.config/rofi/finder.sh
-bindsym $mod+$i3-wm.binding.file_search exec $i3-wm.program.file_search
-
-## Launch // Look Selector // <><Alt> l ##
-set_from_resource $i3-wm.binding.look_selector i3-wm.binding.look_selector Mod1+l
-set_from_resource $i3-wm.program.look_selector i3-wm.program.look_selector rofi -show look -modi look:/usr/share/rofi/modi/look-selector.sh
-bindsym $mod+$i3-wm.binding.look_selector exec $i3-wm.program.look_selector
 
 ###############################################################################
 # Window and Workspace Navigation
@@ -224,8 +216,8 @@ bindsym $mod+$i3-wm.binding.ws_prev_on_output2 workspace prev_on_output
 #set_from_resource $i3-wm.binding.next_free i3-wm.binding.next_free grave
 #bindsym $mod+$i3-wm.binding.next_free exec --no-startup-id /usr/bin/i3-next-workspace
 
-## Navigate // Scratchpad // <> backslash ##
-set_from_resource $i3-wm.binding.scratchpad i3-wm.binding.scratchpad backslash
+## Navigate // Scratchpad // <> + ##
+set_from_resource $i3-wm.binding.scratchpad i3-wm.binding.scratchpad plus
 bindsym $mod+$i3-wm.binding.scratchpad scratchpad show
 
 ## Navigate // Mark // <> m ##
@@ -291,22 +283,19 @@ bindsym $mod+$i3-wm.binding.fullscreen_toggle fullscreen toggle
 set_from_resource $i3-wm.binding.float_toggle i3-wm.binding.float_toggle Shift+f
 bindsym $mod+Shift+$i3-wm.binding.float_toggle floating toggle
 
-## Modify // Move to Scratchpad // <><Shift> backslash ##
-set_from_resource $i3-wm.binding.move_scratchpad i3-wm.binding.move_scratchpad Shift+backslash
+## Modify // Move to Scratchpad // <><Shift> plus ##
+set_from_resource $i3-wm.binding.move_scratchpad i3-wm.binding.move_scratchpad Shift+plus
 bindsym $mod+$i3-wm.binding.move_scratchpad move to scratchpad
 
 ## Modify // Tile/Float Focus Toggle // <><Shift> t ##
 set_from_resource $i3-wm.binding.focus_toggle i3-wm.binding.focus_toggle Shift+t
 bindsym $mod+$i3-wm.binding.focus_toggle focus mode_toggle
 
-## Modify // Window Layout Mode // <> t ##
-set_from_resource $i3-wm.binding.layout_mode i3-wm.binding.layout_mode e
-bindsym $mod+$i3-wm.binding.layout_mode layout toggle splith splitv tabbed stacking 
-
-
-## Modify // Move Window to Next Free Workspace // <><Shift> ` ##
-set_from_resource $i3-wm.binding.move_next_free i3-wm.binding.move_next_free Shift+grave
-bindsym $mod+$i3-wm.binding.move_next_free exec --no-startup-id /usr/bin/i3-next-workspace --move-window
+## Modify // Window Layout Mode // <> ' ##
+set_from_resource $i3-wm.binding.layout_mode i3-wm.binding.layout_mode apostrophe
+bindsym $mod+$i3-wm.binding.layout_mode layout toggle splitv splith tabbed stacking 
+## Modify // Window Layout Mode alt // <> backslash ##
+bindsym $mod+backslash layout toggle splitv splith tabbed stacking 
 
 # move focused container to workspace, move to workspace
 ## Modify // Carry Window to Workspace 1 - 10// <><Shift> 0..9 ##
@@ -346,6 +335,7 @@ workspace_layout $i3-wm.workspace.layout
 ###############################################################################
 # Session Management
 ###############################################################################
+
 
 ## Session // Exit App // <><Shift> q ##
 set_from_resource $i3-wm.binding.exit_app i3-wm.binding.exit_app Shift+q
@@ -393,6 +383,17 @@ set_from_resource $i3-wm.binding.sleep i3-wm.binding.sleep Shift+s
 set_from_resource $i3-wm.program.sleep i3-wm.program.sleep systemctl suspend
 bindsym $mod+$i3-wm.binding.sleep exec $i3-wm.program.sleep
 
+# System mode
+set $mode_sys "System: [l] Lock [L] Logout [p] Power Off [r] Reboot [s] Suspend"
+mode $mode_sys {
+  bindsym l exec $i3-wm.program.lock; mode "default"
+  bindsym Shift+l exec $i3-wm.program.logout; mode "default"
+  bindsym p exec $i3-wm.program.shutdown; mode "default"
+  bindsym r exec $i3-wm.program.reboot; mode "default"
+  bindsym s exec $i3-wm.program.sleep; mode "default"
+
+  bindsym Escape mode "default"
+}
 ###############################################################################
 # System Management
 ###############################################################################
@@ -402,25 +403,8 @@ set_from_resource $i3-wm.binding.settings i3-wm.binding.settings c
 set_from_resource $i3-wm.program.settings i3-wm.program.settings gnome-control-center --class=floating_window
 bindsym $mod+$i3-wm.binding.settings exec $i3-wm.program.settings
 
-## Modify // Display Settings // <> d ##
-set_from_resource $i3-wm.binding.display i3-wm.binding.display d
-set_from_resource $i3-wm.program.display i3-wm.program.display gnome-control-center --class=floating_window display
-bindsym $mod+$i3-wm.binding.display exec $i3-wm.program.display
-
-## Modify // Wifi Settings // <> w ##
-set_from_resource $i3-wm.binding.wifi i3-wm.binding.wifi w
-set_from_resource $i3-wm.program.wifi i3-wm.program.wifi gnome-control-center --class=floating_window wifi
-bindsym $mod+$i3-wm.binding.wifi exec $i3-wm.program.wifi
-
-## Modify // Bluetooth Settings // <> b ##
-set_from_resource $i3-wm.binding.bluetooth i3-wm.binding.bluetooth b
-set_from_resource $i3-wm.program.bluetooth i3-wm.program.bluetooth gnome-control-center --class=floating_window bluetooth
-bindsym $mod+$i3-wm.binding.bluetooth exec $i3-wm.program.bluetooth
-
-## Modify // Sound Settings // <> s ##
-set_from_resource $i3-wm.binding.sound i3-wm.binding.sound s
-set_from_resource $i3-wm.program.sound i3-wm.program.sound gnome-control-center --class=floating_window sound
-bindsym $mod+$i3-wm.binding.sound exec $i3-wm.program.sound
+## Modify // i3 Config // <><Shift>i ## 
+bindsym $mod+Shift+i exec --no-startup-id "/usr/bin/gnome-terminal --class=floating_window -e 'vim .config/regolith/i3/config'"
 
 ## Launch // File Browser // <><Shift> n ##
 set_from_resource $i3-wm.binding.files i3-wm.binding.files Shift+n
@@ -514,8 +498,6 @@ set_from_resource $i3-wm.window.border.size i3-wm.window.border.size 1
 set_from_resource $i3-wm.floatingwindow.border.size i3-wm.floatingwindow.border.size 1
 default_border pixel $i3-wm.window.border.size
 default_floating_border pixel $i3-wm.floatingwindow.border.size
-# default_border normal
-# default_floating_border normal
 
 # Specify the distance between windows in pixels. (i3-gaps)
 set_from_resource $i3-wm.gaps.inner.size i3-wm.gaps.inner.size 5
@@ -534,6 +516,10 @@ popup_during_fullscreen $i3-wm.gaps.popup_during_fullscreen
 # window focus follows your mouse movements as the mouse crosses window borders
 set_from_resource $i3-wm.gaps.focus_follows_mouse i3-wm.gaps.focus_follows_mouse no
 focus_follows_mouse $i3-wm.gaps.focus_follows_mouse
+
+# Floating window default size
+# Temporarily disabling because it causes some windows to be way too big
+#floating_minimum_size 1280 x 960
 
 ###############################################################################
 # i3 Colors and Fonts

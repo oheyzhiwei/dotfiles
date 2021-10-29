@@ -31,41 +31,33 @@ values."
     ;; List of configuration layers to load.
     dotspacemacs-configuration-layers
     '(
-       ansible
-       csharp
-       ruby
-       terraform
-       react
-       sql
-       yaml
-       org
-       typescript
-       html
-       javascript
-       nginx
-       python
-       elixir
-       ;; ----------------------------------------------------------------
-       ;; Example of useful layers you may want to use right away.
-       ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-       ;; <M-m f e R> (Emacs style) to install them.
-       ;; ----------------------------------------------------------------
-       helm
        auto-completion
-       ;; better-defaults
+       c-c++
+       colors
+       (dart :variables
+         lsp-enable-on-type-formatting t)
+       elixir
        emacs-lisp
        git
        (go :variables go-tab-width 4)
+       helm
+       html
+       javascript
        markdown
-       c-c++
+       nginx
+       org
+       python
+       react
        (shell :variables
          shell-default-height 30
          shell-default-position 'bottom)
        shell-scripts
        spell-checking
+       sql
        syntax-checking
+       typescript
        version-control
-       colors
+       yaml
        )
     ;; List of additional packages that will be installed without being
     ;; wrapped in a layer. If you need some configuration for these
@@ -586,6 +578,13 @@ project root). Excludes the file basename. See `*buffer-name' for that."
     ;; line-wrap in org-mode
     (toggle-truncate-lines)
     )
+
+
+  ;; dart
+  (defun custom/dartfmt()
+    (interactive)
+    (shell-command (concatenate 'string "flutter format " (buffer-file-name)))
+    )
   ;; end dotspacemacs/user-config
   )
 
@@ -632,3 +631,50 @@ project root). Excludes the file basename. See `*buffer-name' for that."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+  '(ansi-color-faces-vector
+     [default default default italic underline success warning error])
+ '(evil-cross-lines t)
+ '(evil-escape-key-sequence "fd")
+ '(evil-want-Y-yank-to-eol nil)
+ '(golden-ratio-exclude-buffer-names (quote (" *which-key*" "*LV*" " *NeoTree*" "*Ediff*")))
+  '(golden-ratio-exclude-modes
+     (quote
+       ("speedbar-mode" "gdb-memory-mode" "gdb-disassembly-mode" "gdb-inferior-io-mode" "gdb-frames-mode" "gdb-threads-mode" "gdb-breakpoints-mode" "gdb-registers-mode" "gdb-locals-mode" "gud-mode" "dired-mode" "ediff-mode" "calc-mode" "bs-mode")))
+ '(golden-ratio-mode t)
+  '(helm-projectile-grep-or-ack-actions
+     (quote
+       ("Find file" helm-grep-action "Find file other frame" helm-grep-other-frame
+         (lambda nil
+           (and
+             (locate-library "elscreen")
+             "Find file in Elscreen"))
+         helm-grep-jump-elscreen "Save results in grep buffer" helm-grep-save-results "Find file other window" helm-grep-other-window "something" helm-grep-other-window)))
+ '(js-indent-level 2 t)
+ '(js2-basic-offset 2 t)
+ '(js2-strict-trailing-comma-warning nil)
+ '(line-number-mode nil)
+ '(org-agenda-files (quote ("~/org/gtd.org")))
+  '(package-selected-packages
+     (quote
+       (lsp-ui lsp-python-ms lsp-pyright lsp-origami origami lsp-dart dap-mode lsp-treemacs bui helm-lsp flutter dart-mode ccls lsp-mode org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot typescript-mode powerline hydra lv projectile groovy-mode flyspell-correct company-ansible anaconda-mode avy tern anzu iedit smartparens evil goto-chg elixir-mode flycheck company request helm helm-core yasnippet multiple-cursors magit-popup magit transient git-commit with-editor async markdown-mode org-plus-contrib pythonic f haml-mode js2-mode simple-httpd dash jedi jedi-core python-environment epc ctable concurrent deferred terraform-mode hcl-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake omnisharp shut-up minitest csharp-mode chruby bundler inf-ruby yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit sql-indent spaceline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pip-requirements persp-mode pcre2el paradox orgit org-bullets open-junk-file ob-elixir nginx-mode neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc insert-shebang info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-ext helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-guru go-eldoc gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode disaster diff-hl define-word cython-mode company-web company-tern company-statistics company-shell company-go company-c-headers company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell ac-etags)))
+ '(paradox-github-token t)
+  '(projectile-globally-ignored-directories
+     (quote
+       (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work" "venv" "virtualenv" "node_modules"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
