@@ -5,13 +5,14 @@ export PATH=$PATH:$GOPATHBINS
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Applications/android-studio/bin:$PATH"
+export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 export JAVA_HOME="$HOME/Applications/android-studio/jre"
 
 # NVM
 # Hard code default to lts/carbon bin folder for spacemacs / CLI tools.
 # This means node and other CLI tools will use this version until nvm is initialized
-export NVMBIN=$HOME/.nvm/versions/node/v8.11.3/bin
+export NVMBIN=$HOME/.nvm/versions/node/v16.13.0/bin
 export PATH=$PATH:$NVMBIN
 # Setup lazy loading for nvm
 NVM_INITIALIZED=false
@@ -49,20 +50,20 @@ function yarn(){
 }
 
 # pyenv
-PYENV_INITIALIZED=false
-function initialize_pyenv() {
-	if [ "$PYENV_INITIALIZED" = false ] ;
-	then
-		eval "$(pyenv init -)"
-		eval "$(pyenv virtualenv-init -)"
-		PYENV_INITIALIZED=true
-	fi
-}
+# PYENV_INITIALIZED=false
+# function initialize_pyenv() {
+# 	if [ "$PYENV_INITIALIZED" = false ] ;
+# 	then
+# 		eval "$(pyenv init -)"
+# 		eval "$(pyenv virtualenv-init -)"
+# 		PYENV_INITIALIZED=true
+# 	fi
+# }
 # Couldn't get this to work with spacemacs
-if  [ -n "$(command -v pyenv)"  ];
-then
-	initialize_pyenv
-fi
+# if  [ -n "$(command -v pyenv)"  ];
+# then
+# 	initialize_pyenv
+# fi
 # function pyenv() {
 # 	unset -f pyenv
 # 	initialize_pyenv
