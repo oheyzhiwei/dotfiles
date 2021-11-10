@@ -1,9 +1,9 @@
 [user]
-    name = zweicoder
-    email = zweicoder@gmail.com
+	name = Zhi Wei Chong
+	email = zhiwei@arbo.works
 [core]
     autocrlf = input
-    excludesfile = ~/.gitignore
+    excludesfile = ~/.gitignore_global
     pager = diff-so-fancy | less -F -X
 [push]
     default = simple
@@ -20,4 +20,5 @@
     remote-cleanup-dryrun = !"git branch --remote --merged origin/master | grep  -v '\\*\\|master\\|develop' | sed 's$origin/$$'"
     remote-cleanup = !"git branch --remote --merged origin/master | grep  -v '\\*\\|master\\|develop' | sed 's$origin/$$' | xargs -i git push origin --delete {}"
     cb = !"git rev-parse --abbrev-ref HEAD"
+    po = !"git push origin -u `git cb`"
 
