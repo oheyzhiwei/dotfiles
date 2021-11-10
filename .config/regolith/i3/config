@@ -213,8 +213,11 @@ bindsym $mod+$i3-wm.binding.ws_prev_on_output workspace prev_on_output
 set_from_resource $i3-wm.binding.ws_prev_on_output2 i3-wm.binding.ws_prev_on_output2 Ctrl+h
 bindsym $mod+$i3-wm.binding.ws_prev_on_output2 workspace prev_on_output
 
-#set_from_resource $i3-wm.binding.next_free i3-wm.binding.next_free grave
-#bindsym $mod+$i3-wm.binding.next_free exec --no-startup-id /usr/bin/i3-next-workspace
+set_from_resource $i3-wm.binding.next_free i3-wm.binding.next_free period
+bindsym $mod+$i3-wm.binding.next_free exec --no-startup-id /usr/bin/i3-next-workspace
+
+set_from_resource $i3-wm.binding.next_free_carry i3-wm.binding.next_free_carry Shift+period
+bindsym $mod+$i3-wm.binding.next_free_carry exec --no-startup-id /usr/bin/i3-next-workspace -mvf
 
 ## Navigate // Scratchpad // <> + ##
 set_from_resource $i3-wm.binding.scratchpad i3-wm.binding.scratchpad plus
@@ -416,6 +419,9 @@ set_from_resource $i3-wm.binding.notification_ui i3-wm.binding.notification_ui n
 set_from_resource $i3-wm.program.notification_ui i3-wm.program.notification_ui /usr/bin/rofication-gui
 bindsym $mod+$i3-wm.binding.notification_ui exec $i3-wm.program.notification_ui
 
+
+## Launch // GPaste // <> p ##
+bindsym $mod+p  exec /usr/bin/i3-gpaste
 ###############################################################################
 # Workspace Management
 ###############################################################################
@@ -425,8 +431,8 @@ bindsym $mod+$i3-wm.binding.notification_ui exec $i3-wm.program.notification_ui
 set_from_resource $i3-wm.binding.save_layout i3-wm.binding.save_layout comma
 bindsym $mod+$i3-wm.binding.save_layout  exec /usr/bin/i3-snapshot -o > /tmp/i3-snapshot
 ## Modify // Load Window Layout // <> . ##
-set_from_resource $i3-wm.binding.load_layout i3-wm.binding.load_layout period
-bindsym $mod+$i3-wm.binding.load_layout exec /usr/bin/i3-snapshot -c < /tmp/i3-snapshot
+# set_from_resource $i3-wm.binding.load_layout i3-wm.binding.load_layout period
+# bindsym $mod+$i3-wm.binding.load_layout exec /usr/bin/i3-snapshot -c < /tmp/i3-snapshot
 
 # Toggle bar visibility
 ## Modify // Toggle Bar // <> i ##
@@ -532,8 +538,11 @@ set_from_resource $focused.color.text i3-wm.client.focused.color.text "#fdf6e3"
 set_from_resource $focused.color.indicator i3-wm.client.focused.color.indicator "#268bd2"
 set_from_resource $focused.color.child_border i3-wm.client.focused.color.child_border
 
-set_from_resource $focused_inactive.color.border i3-wm.client.focused_inactive.color.border "#002b36"
+set_from_resource $focused.color.border i3-wm.client.focused_inactive.color.border "#002b36"
+# set_from_resource $focused_inactive.color.border i3-wm.client.focused_inactive.color.border "#002b36"
+# set_from_resource $focused_inactive.color.background i3-wm.client.focused_inactive.color.background "#073642"
 set_from_resource $focused_inactive.color.background i3-wm.client.focused_inactive.color.background "#073642"
+
 set_from_resource $focused_inactive.color.text i3-wm.client.focused_inactive.color.text "#839496"
 set_from_resource $focused_inactive.color.indicator i3-wm.client.focused_inactive.color.indicator "#073642"
 set_from_resource $focused_inactive.color.child_border i3-wm.client.focused_inactive.color.child_border
@@ -653,5 +662,4 @@ set_from_resource $i3-wm.program.2 i3-wm.program.2 :
 exec --no-startup-id $i3-wm.program.2
 set_from_resource $i3-wm.program.3 i3-wm.program.3 :
 exec --no-startup-id $i3-wm.program.3
-
 
