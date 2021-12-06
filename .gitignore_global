@@ -147,3 +147,7 @@ node_modules
 
 # Generated protos
 proto-gen
+
+# Pyright / mypy Stub files
+*.pyi
+pyrightconfig.json

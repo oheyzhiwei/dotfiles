@@ -196,6 +196,7 @@ bindsym $mod+$i3-wm.binding.ws_next_on_output workspace next_on_output
 ## Navigate // Next Workspace on Output // <><Ctrl> l ##
 set_from_resource $i3-wm.binding.ws_next_on_output2 i3-wm.binding.ws_next_on_output2 Ctrl+l
 bindsym $mod+$i3-wm.binding.ws_next_on_output2 workspace next_on_output
+bindsym $mod+Ctrl+Right workspace next_on_output
 
 ## Navigate // Previous Workspace // <><Shift> Tab ##
 set_from_resource $i3-wm.binding.ws_prev i3-wm.binding.ws_prev Shift+Tab
@@ -212,6 +213,7 @@ bindsym $mod+$i3-wm.binding.ws_prev_on_output workspace prev_on_output
 ## Navigate // Previous Workspace on Output // <><Ctrl> h ##
 set_from_resource $i3-wm.binding.ws_prev_on_output2 i3-wm.binding.ws_prev_on_output2 Ctrl+h
 bindsym $mod+$i3-wm.binding.ws_prev_on_output2 workspace prev_on_output
+bindsym $mod+Ctrl+Left workspace prev_on_output
 
 set_from_resource $i3-wm.binding.next_free i3-wm.binding.next_free period
 bindsym $mod+$i3-wm.binding.next_free exec --no-startup-id /usr/bin/i3-next-workspace
@@ -225,8 +227,17 @@ bindsym $mod+$i3-wm.binding.scratchpad scratchpad show
 
 ## Navigate // Mark // <> m ##
 bindsym $mod+m exec i3-input -F 'mark %s' -l 1 -P 'Mark: '
-## Navigate // Jump to Mark // <> ` ##
+
+## Navigate // Mark (long) // <> Shift+m ##
+bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
+
+## Navigate // Jump to Mark // <> `/g ##
 bindsym $mod+grave exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
+bindsym $mod+g exec i3-input -F '[con_mark="%s"] focus' -l 1 -P 'Goto: '
+
+## Navigate // Jump to Mark // <> Shift+`/g ##
+bindsym $mod+Shift+grave exec i3-input -F '[con_mark="%s"] focus' -P 'Goto: '
+bindsym $mod+Shift+g exec i3-input -F '[con_mark="%s"] focus' -P 'Goto: '
 
 bindsym $mod+x exec i3-input -F '%s' -P 'Exec: '
 
@@ -265,14 +276,6 @@ bindsym $mod+$i3-wm.binding.take_left move workspace to output left
 bindsym $mod+$i3-wm.binding.take_down move workspace to output down
 bindsym $mod+$i3-wm.binding.take_up move workspace to output up
 bindsym $mod+$i3-wm.binding.take_right move workspace to output right
-
-## Modify // Vertical Window Orientation // <> v ##
-set_from_resource $i3-wm.binding.split_v i3-wm.binding.split_v v
-bindsym $mod+$i3-wm.binding.split_v split vertical
-
-## Modify // Horizontal Window Orientation // <> g ##
-set_from_resource $i3-wm.binding.split_h i3-wm.binding.split_h g
-bindsym $mod+$i3-wm.binding.split_h split horizontal
 
 ## Modify // Toggle Window Orientation // <> Backspace ##
 set_from_resource $i3-wm.binding.orientation_toggle i3-wm.binding.orientation_toggle BackSpace

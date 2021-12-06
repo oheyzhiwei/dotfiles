@@ -1,11 +1,12 @@
 export PATH=~/bin:$PATH
-# export GOPATH=~/go:/media/code/go-projects
-# GOPATHBINS=~/go/bin:/media/code/go-projects/bin
-export PATH=$PATH:$GOPATHBINS
+export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Applications/android-studio/bin:$PATH"
 export PATH="$PATH":"$HOME/.pub-cache/bin"
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
 
 export JAVA_HOME="$HOME/Applications/android-studio/jre"
 
@@ -80,6 +81,4 @@ function yarn(){
 # 	initialize_pyenv
 # 	pip $@
 # }
-
-
 
