@@ -30,7 +30,8 @@ values."
     dotspacemacs-configuration-layer-path '()
     ;; List of configuration layers to load.
     dotspacemacs-configuration-layers
-    '(protobuf
+    '(python
+       protobuf
        auto-completion
        c-c++
        colors
@@ -612,6 +613,7 @@ project root). Excludes the file basename. See `*buffer-name' for that."
   ;; python
   ;; (with-eval-after-load 'python
   ;;   )
+  ;; Arbo
   (with-eval-after-load 'lsp-mode
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bazel-[^/\\\\]+\\'")
@@ -622,6 +624,10 @@ project root). Excludes the file basename. See `*buffer-name' for that."
     (add-to-list 'lsp-file-watch-ignored-directories "/home/zhiwei/code/arbo/dataworks/cloud/setup.+")
     )
 
+  ;; Golden ratio
+  (define-advice select-window (:after (window &optional no-record) golden-ratio-resize-window)
+    (golden-ratio)
+    nil)
   ;; Bazel
   (defun custom/buildify()
     (interactive)
@@ -718,7 +724,7 @@ This function is called at the very end of Spacemacs initialization."
  '(org-agenda-files (quote ("~/org/gtd.org")))
   '(package-selected-packages
      (quote
-       (bazel org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot typescript-mode powerline hydra lv projectile groovy-mode flyspell-correct company-ansible anaconda-mode avy tern anzu iedit smartparens evil goto-chg elixir-mode flycheck company request helm helm-core yasnippet multiple-cursors magit-popup magit transient git-commit with-editor async markdown-mode org-plus-contrib pythonic f haml-mode js2-mode simple-httpd dash jedi jedi-core python-environment epc ctable concurrent deferred terraform-mode hcl-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake omnisharp shut-up minitest csharp-mode chruby bundler inf-ruby yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit sql-indent spaceline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pip-requirements persp-mode pcre2el paradox orgit org-bullets open-junk-file ob-elixir nginx-mode neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc insert-shebang info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-ext helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-guru go-eldoc gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode disaster diff-hl define-word cython-mode company-web company-tern company-statistics company-shell company-go company-c-headers company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell ac-etags)))
+       (stickyfunc-enhance sphinx-doc pydoc poetry pippel pipenv nose lsp-python-ms lsp-pyright importmagic helm-gtags helm-cscope xcscope ggtags counsel-gtags counsel swiper ivy blacken org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download htmlize gnuplot typescript-mode powerline hydra lv projectile groovy-mode flyspell-correct company-ansible anaconda-mode avy tern anzu iedit smartparens evil goto-chg elixir-mode flycheck company request helm helm-core yasnippet multiple-cursors magit-popup magit transient git-commit with-editor async markdown-mode org-plus-contrib pythonic f haml-mode js2-mode simple-httpd dash jedi jedi-core python-environment epc ctable concurrent deferred terraform-mode hcl-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake omnisharp shut-up minitest csharp-mode chruby bundler inf-ruby yapfify yaml-mode xterm-color ws-butler winum which-key web-mode web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tide tagedit sql-indent spaceline smeargle slim-mode shell-pop scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode prettier-js popwin pip-requirements persp-mode pcre2el paradox orgit org-bullets open-junk-file ob-elixir nginx-mode neotree multi-term move-text mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc insert-shebang info+ indent-guide hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-ext helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-guru go-eldoc gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flycheck-mix flycheck-credo flx-ido fish-mode fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav dumb-jump dockerfile-mode disaster diff-hl define-word cython-mode company-web company-tern company-statistics company-shell company-go company-c-headers company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile alchemist aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell ac-etags)))
  '(paradox-github-token t)
   '(projectile-globally-ignored-directories
      (quote
