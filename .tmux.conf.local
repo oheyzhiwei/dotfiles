@@ -267,5 +267,7 @@ set -g @tpm_plugins '          \
 # https://github.com/tmux-plugins/tmux-resurrect/blob/master/docs/restoring_programs.md
 set -g @resurrect-processes  ':all:'
 
+set -g prefix C-k
+
 run '~/.tmux/plugins/tpm/tpm'
 

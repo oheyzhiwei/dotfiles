@@ -25,7 +25,7 @@ ZSH_CUSTOM="$HOME/.zsh/"
 # Add wisely, as too many plugins slow down shell startup.
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 bgnotify_threshold=7
-plugins=(git gitfast git-extras colored-man-pages command-not-found copydir cp dircycle fasd tmuxinator bgnotify docker kubectl)
+plugins=(git gitfast git-extras colored-man-pages command-not-found copypath cp dircycle fasd tmuxinator bgnotify docker kubectl)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -52,3 +52,6 @@ if [ -f '/home/zhiwei/Applications/google-cloud-sdk/path.zsh.inc' ]; then . '/ho
 if [ -f '/home/zhiwei/Applications/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/zhiwei/Applications/google-cloud-sdk/completion.zsh.inc'; fi
 
 eval "$(pyenv init -)"
+
+# add Pulumi to the PATH
+export PATH=$PATH:$HOME/.pulumi/bin

@@ -4,3 +4,5 @@ build
 *.min.js
 *.map
 logs
+gen
+proto_gen

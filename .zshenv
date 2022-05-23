@@ -1,14 +1,20 @@
 export PATH=~/bin:$PATH
 export PATH="$HOME/go/bin:$PATH"
+export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+# Android studio
 export PATH="$HOME/Applications/android-studio/bin:$PATH"
+# Maven
+export PATH="$HOME/Applications/apache-maven-3.8.5/bin:$PATH"
+# Flutter
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 
 export JAVA_HOME="$HOME/Applications/android-studio/jre"
+export GPG_TTY=$(tty)
 
 # NVM
 # Hard code default to lts/carbon bin folder for spacemacs / CLI tools.

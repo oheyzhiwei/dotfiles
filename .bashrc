@@ -185,15 +185,7 @@ shopt -s dirspell 2> /dev/null
 # Correct spelling errors in arguments supplied to cd
 shopt -s cdspell 2> /dev/null
 
-export ideas=~/notebook/private/ideas
-export notebook=~/notebook/private/
-
-
 export PATH=~/bin:$PATH
-export GOPATH=~/go:/media/code/go-projects
-GOPATHBINS=~/go/bin:/media/code/go-projects/bin
-export PATH=$PATH:$GOPATHBINS
-export PATH=$PATH:~/idea-IU/bin
 export PATH="$HOME/.local/bin:$PATH"
 export VISUAL=vim
 export EDITOR="$VISUAL"

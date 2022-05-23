@@ -44,5 +44,6 @@ alias tf='terraform'
 alias af='ec2-fzf'
 alias dent='docker run -it --entrypoint'
 alias b='bazel'
+alias bzl='bazelisk'
 
 [ -n `command -v fd` ] && alias find='fd'
