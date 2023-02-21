@@ -47,3 +47,7 @@ alias b='bazel'
 alias bzl='bazelisk'
 
 [ -n `command -v fd` ] && alias find='fd'
+
+bbp(){  bazel build $(bazel query 'kind("proto_library", //...)')}
+
+dcl() {bazel run //depclean clean $@}

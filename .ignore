@@ -1,6 +1,7 @@
 .git
 node_modules
 build
+api/gen
 *.min.js
 *.map
 logs
