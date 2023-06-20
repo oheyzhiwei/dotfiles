@@ -7,3 +7,4 @@ api/gen
 logs
 gen
 proto_gen
+*.ipynb

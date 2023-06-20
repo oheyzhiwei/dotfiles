@@ -105,3 +105,9 @@ function yarn(){
 # }
 
 . "$HOME/.cargo/env"
+# -- added by android_setup_ubuntu.sh --
+# -- added by chrome_setup_ubuntu.sh --
+export CHROME_HOME="$HOME/.chrome"
+export PATH="$CHROME_HOME/bin:$PATH"
+# -- added by flutter_setup_ubuntu.sh --
+# -- added by dart_proto_setup.sh --

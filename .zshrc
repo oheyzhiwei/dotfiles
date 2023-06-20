@@ -59,3 +59,15 @@ export PATH=$PATH:$HOME/.pulumi/bin
 # Bazel completion
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# What could go wrong?
+eval "$(github-copilot-cli alias -- "$0")"
+
+_fzf_complete_bazel() {
+  _fzf_complete --prompt="bazel>  " -- "$@" < <(
+  bazel query --noshow_progress --keep_going '//... -//experimental/...'
+  ) 
+}
+_fzf_complete_b() {
+  _fzf_complete_bazel
+}

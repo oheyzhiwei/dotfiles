@@ -48,6 +48,22 @@ alias bzl='bazelisk'
 
 [ -n `command -v fd` ] && alias find='fd'
 
-bbp(){  bazel build $(bazel query 'kind("proto_library", //...)')}
-
 dcl() {bazel run //depclean clean $@}
+
+# The completion was never there
+tctl_preprod() {
+tctl \
+  --address consumer-preprod.tov2g.tmprl.cloud:7233 \
+--ns consumer-preprod.tov2g \
+--tls_cert_path /tmp/temporal/preprod/client_cert.pem \
+--tls_key_path /tmp/temporal/preprod/client_private_key.pem \
+$@
+}
+tctl_dev() {
+tctl \
+  --address consumer-dev.tov2g.tmprl.cloud:7233 \
+--ns consumer-dev.tov2g \
+--tls_cert_path /tmp/temporal/dev/client_cert.pem \
+--tls_key_path /tmp/temporal/dev/client_private_key.pem \
+$@
+}
