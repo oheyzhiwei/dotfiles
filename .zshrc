@@ -64,10 +64,15 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 eval "$(github-copilot-cli alias -- "$0")"
 
 _fzf_complete_bazel() {
-  _fzf_complete --prompt="bazel>  " -- "$@" < <(
+  _fzf_complete --prompt="bazel> " -- "$@" < <(
   bazel query --noshow_progress --keep_going '//... -//experimental/...'
   ) 
 }
 _fzf_complete_b() {
-  _fzf_complete_bazel
+  _fzf_complete --prompt="bazel> " -- "$@" < <(
+  bazel query --noshow_progress --keep_going '//... -//experimental/...'
+  ) 
 }
+
+test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
+. "$HOME/.asdf/asdf.sh"

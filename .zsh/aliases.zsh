@@ -45,10 +45,13 @@ alias af='ec2-fzf'
 alias dent='docker run -it --entrypoint'
 alias b='bazel'
 alias bzl='bazelisk'
+alias cloudo='./cloud/scripts/run_cloud_process.sh -p'
 
 [ -n `command -v fd` ] && alias find='fd'
 
-dcl() {bazel run //depclean clean $@}
+dcl() {
+  bazel run //depclean clean $@
+}
 
 # The completion was never there
 tctl_preprod() {
