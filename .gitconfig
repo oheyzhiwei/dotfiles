@@ -44,11 +44,13 @@
     remote-cleanup = !"git branch --remote --merged origin/master | grep  -v '\\*\\|master\\|develop' | sed 's$origin/$$' | xargs -i git push origin --delete {}"
     cb = !"git rev-parse --abbrev-ref HEAD"
     po = !"git push origin -u `git cb`"
+    pf = !"git push -f"
     co = checkout
     cm = commit
     cc = commit
     f = fetch --prune
-    oops = reset --hard
+    oops = reset --soft HEAD~1
+    fuck = reset --hard
 
 [commit]
 	gpgsign = true

@@ -669,6 +669,7 @@ project root). Excludes the file basename. See `*buffer-name' for that."
 
   (define-key evil-insert-state-map (kbd "C-<j>") 'copilot-next-completion)
   (define-key evil-insert-state-map (kbd "C-j") 'copilot-next-completion)
+  (define-key evil-insert-state-map (kbd "C-:") 'copilot-accept-completion)
 
   ;; misc
   ;; Use `sh` to speed up start time of projectile etc

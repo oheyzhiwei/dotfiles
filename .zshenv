@@ -19,6 +19,8 @@ export PATH="$PROTOC_HOME/bin:$PATH"
 # Android
 export ANDROID_HOME="$HOME/.android"
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+# Temporal
+export PATH="$HOME/.temporalio/bin:$PATH"
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"

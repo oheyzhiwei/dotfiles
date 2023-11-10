@@ -70,3 +70,5 @@ tctl \
 --tls_key_path /tmp/temporal/dev/client_private_key.pem \
 $@
 }
+
+alias t='temporal'

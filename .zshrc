@@ -75,4 +75,7 @@ _fzf_complete_b() {
 }
 
 test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
-. "$HOME/.asdf/asdf.sh"
+test -s $HOME/.asdf/asdf.sh. && "$HOME/.asdf/asdf.sh"
+
+source <(temporal completion zsh)
+
