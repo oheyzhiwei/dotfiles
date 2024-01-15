@@ -1,0 +1,202 @@
+##===== Variables
+set $primary_display HDMI-1-1
+set $secondary_display eDP-1-1
+# set $mod Mod4
+# set $alt Mod1
+set $left h
+set $down j
+set $up k
+set $right l
+
+##===== Theme
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
+client.focused_inactive #333333 #222222 #ffffff #484e50   #000000
+client.unfocused        #333333 #222222 #888888 #292d2e   #000000
+client.urgent           #2f343a #900000 #ffffff #900000   #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #000000
+client.background #1E272B
+
+# font pango:Terminus 14px
+
+
+# Only enable gaps on a workspace when there is at least one container
+set_from_resource $wm.gaps.smart wm.gaps.smart on
+smart_gaps $wm.gaps.smart
+#
+# Specify the distance between windows in pixels
+# set_from_resource $wm.gaps.inner.size wm.gaps.inner.size 50
+# set_from_resource $wm.gaps.outer.size wm.gaps.outer.size 0
+gaps inner 12
+gaps outer 0
+
+##===== Behavior Config
+focus_follows_mouse no
+# switch to workspace with urgent window automatically
+for_window [urgent=latest] focus
+show_marks yes
+floating_modifier $mod
+title_align center
+# These dont really work
+# default_border pixel 2
+# hide_edge_borders smart
+# new_window pixel 2
+# new_float pixel 2
+workspace_auto_back_and_forth yes
+
+
+##===== Key bindings
+
+# Window kill command
+bindsym $mod+Shift+q kill
+
+## Screenshot // Area to clipboard // Print ##
+bindsym Print exec --no-startup-id ~/.config/regolith3/screenshot.sh
+# bindsym Print exec gnome-screenshot -ca 
+## Screenshot // Area to file // <Ctrl> Print ##
+bindsym ctrl+Print exec gnome-screenshot -a 
+#
+## Screenshot // Window to clipboard // <Shift> Print ##
+bindsym Shift+Print exec gnome-screenshot -cw 
+## Screenshot // Window to file // <Ctrl><Shift> Print ##
+bindsym ctrl+Shift+Print exec gnome-screenshot -cw 
+
+## Screenshot // Interactive //  <> Print ##
+bindsym $mod+Print exec gnome-screenshot -i
+
+## Clipboard // Manager // <> p
+bindsym $mod+p exec diodon
+
+bindsym $alt+ctrl+period exec playerctl next
+bindsym $alt+ctrl+comma exec playerctl previous
+bindsym $alt+ctrl+space exec playerctl play-pause
+bindsym $alt+ctrl+enter exec playerctl play-pause
+##==== End Key Bindings
+
+##===== Modes
+# [Window mode] Resize window (you can also use the mouse for that)
+mode "resize" {
+# These bindings trigger as soon as you enter the resize mode
+# Pressing left will shrink the window’s width.
+# Pressing right will grow the window’s width.
+# Pressing up will shrink the window’s height.
+# Pressing down will grow the window’s height.
+  bindsym h resize shrink width 5 px or 5 ppt
+    bindsym l resize grow width 5 px or 5 ppt
+    bindsym k resize grow height 5 px or 5 ppt
+    bindsym j resize shrink height 5 px or 5 ppt
+
+# same bindings, but for the arrow keys
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+# gaps
+    set_from_resource $wm.binding.inc_gaps_big wm.binding.inc_gaps_big Shift+plus
+    set_from_resource $wm.binding.dec_gaps_big wm.binding.dec_gaps_big Shift+minus
+    bindsym $mod+$wm.binding.dec_gaps_big gaps inner current minus 12
+    bindsym $mod+$wm.binding.inc_gaps_big gaps inner current plus 12
+
+# exit resize mode: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+## [System Mode] Shut down, restart and locking features
+set $mode_system "[SYS] (l)ock, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown"
+mode $mode_system {
+  bindsym l exec --no-startup-id gnome-screensaver-command --lock, mode "default"
+    bindsym s exec --no-startup-id systemctl suspend, mode "default"
+    bindsym h exec --no-startup-id systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff, mode "default"
+
+# exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+## [i3 Mode]
+set_from_resource $wm.i3.config wm.i3.config /home/zhiwei/.config/regolith3/i3/config.d/
+
+set $mode_i3 "[i3] (r)eload (R)estart (e)dit"
+mode $mode_i3 {
+# reload the configuration file
+  bindsym r reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+    bindsym Shift+r restart
+    bindsym e exec --no-startup-id /usr/bin/gnome-terminal --class=floating_window -e 'vim $wm.i3.config'; mode "default"
+    # bindsym e exec --no-startup-id vim $wm.i3.config
+
+    bindsym Escape mode "default"
+}
+## [Mark mode]
+set $mode_mark "[Mark] (a)dd (j)ump (r)emove"
+mode $mode_mark {
+# TODO ilia find mark / worksapces
+  bindsym a exec i3-input -F 'mark %s' -P 'mark: '; mode default
+    bindsym r exec i3-input -F 'unmark %s' -P 'unmark: '; mode default
+    bindsym j exec i3-input -F '[con_mark="%s"] focus' -P 'jump to mark: '; mode default
+
+    bindsym Escape mode "default"
+}
+
+
+
+## [SPC Mode] Access to other modes via mnemonic keys
+# Load stylesheet if exists
+set_from_resource $ilia.stylesheet ilia.stylesheet
+set $mode_spc "[SPC] (m)ark e(x)ec (i)3 (SPC)launch (j)ump (r)esize (f)ind window"
+mode $mode_spc {
+  bindsym space exec --no-startup-id ilia -p apps -t $ilia.stylesheet, mode "default"
+
+    bindsym f exec --no-startup-id ilia -p exec --no-startup-id ilia -p windows -t $ilia.stylesheet, mode "default"
+    bindsym x exec i3-input -F '%s' -P 'Command: '
+
+    bindsym Shift+s mode $mode_system
+    bindsym r mode "resize"
+    bindsym i mode $mode_i3
+    bindsym m mode $mode_mark
+
+    bindsym Escape mode "default"
+}
+bindsym $mod+space mode $mode_spc
+
+
+
+
+## Launch // Keybinding Viewer // <><Shift> ? ##
+set_from_resource $wm.binding.help wm.binding.help Shift+question
+set_from_resource $wm.program.help wm.program.help ilia -p keybindings
+bindsym $mod+$wm.binding.help exec --no-startup-id $wm.program.help -a -t $ilia.stylesheet
+
+#===== Autostart applications
+# exec --no-startup-id nm-applet
+# exec --no-startup-id pamac-tray
+# exec --no-startup-id clipit
+# exec --no-startup-id $HOME/.config/i3/startup.sh
+# exec --no-startup-id $HOME/.config/polybar/launch.sh
+# exec_always --no-startup-id ff-theme-util
+# exec_always --no-startup-id fix_xcursor
+
+# bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+# bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+# bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+# touchpad on and off controller on laptop with Fn+<touchpad control functional key>
+# bindsym XF86TouchpadOn exec --no-startup-id synclient Touchpadoff=0
+# bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
+
+# Sreen brightness controls
+# bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
+# bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+
+# bar {
+#   status_command i3status
+#     mode dock
+#     position top
+#     tray_output primary
+#     tray_padding 10
+# }
