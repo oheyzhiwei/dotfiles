@@ -1,15 +1,16 @@
 [user]
 	name = Zhi Wei Chong
-	email = zhiwei@arbo.works
-	signingkey = 2C8A20B5CD964E30
+	email = zhiwei@artafinance.com
+	signingkey = AF2C74EF8B5E87CCA66CCE405F650582B6FAD743
 [core]
     autocrlf = input
-    excludesfile = ~/.gitignore_global
+	excludesfile = /home/zhiwei/.gitignore
     #pager = diff-so-fancy | less -F -X
-    pager = delta
+    # pager = delta
+    editor = vim
 
-[interactive]
-    diffFilter = delta --color-only
+; [interactive]
+    ; diffFilter = delta --color-only
 
 # === Delta Config
 [delta]
@@ -56,3 +57,7 @@
 	gpgsign = true
 [fetch]
 	prune = true
+[pull]
+	rebase = true
+[advice]
+	detachedhead = false

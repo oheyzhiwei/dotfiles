@@ -33,7 +33,9 @@ export GPG_TTY=$(tty)
 # NVM
 # Hard code default to lts/carbon bin folder for spacemacs / CLI tools.
 # This means node and other CLI tools will use this version until nvm is initialized
-export NVMBIN=$HOME/.nvm/versions/node/v16.17.0/bin
+# Use `nvm which node`
+export NVMBIN=$HOME/.nvm/versions/node/v18.12.1/bin/node
+
 export PATH=$PATH:$NVMBIN
 # Setup lazy loading for nvm
 NVM_INITIALIZED=false
@@ -106,10 +108,11 @@ function yarn(){
 # 	pip $@
 # }
 
-. "$HOME/.cargo/env"
 # -- added by android_setup_ubuntu.sh --
 # -- added by chrome_setup_ubuntu.sh --
 export CHROME_HOME="$HOME/.chrome"
 export PATH="$CHROME_HOME/bin:$PATH"
 # -- added by flutter_setup_ubuntu.sh --
 # -- added by dart_proto_setup.sh --
+# -- added by 02_pyenv_setup_bash.sh --
+which pyenv > /dev/null || export PATH="$HOME/.pyenv/bin:$PATH"

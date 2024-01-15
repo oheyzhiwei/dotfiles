@@ -45,12 +45,6 @@ export ERL_AFLAGS="-kernel shell_history enabled"
 
 
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/zhiwei/Applications/google-cloud-sdk/path.zsh.inc' ]; then . '/home/zhiwei/Applications/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/zhiwei/Applications/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/zhiwei/Applications/google-cloud-sdk/completion.zsh.inc'; fi
-
 eval "$(pyenv init -)"
 
 # add Pulumi to the PATH
@@ -61,7 +55,7 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # What could go wrong?
-eval "$(github-copilot-cli alias -- "$0")"
+# eval "$(github-copilot-cli alias -- "$0")"
 
 _fzf_complete_bazel() {
   _fzf_complete --prompt="bazel> " -- "$@" < <(
@@ -74,8 +68,17 @@ _fzf_complete_b() {
   ) 
 }
 
-test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
-test -s $HOME/.asdf/asdf.sh. && "$HOME/.asdf/asdf.sh"
+if [ -n "command -v temporal" ]; then source <(temporal completion zsh); fi
+if [ -n "command -v direnv" ]; then eval "$(direnv hook zsh)"; fi
 
-source <(temporal completion zsh)
+# -- added by 02_pyenv_setup_bash.sh --
+which pyenv > /dev/null && eval "$(pyenv init -)"
+which pyenv > /dev/null && eval "$(pyenv virtualenv-init - | grep -v 'export PATH' )"
 
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/zhiwei/code/google-cloud-sdk/path.zsh.inc' ]; then . '/home/zhiwei/code/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/zhiwei/code/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/zhiwei/code/google-cloud-sdk/completion.zsh.inc'; fi
+# -- added by kubectl_setup_bash.sh --
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True

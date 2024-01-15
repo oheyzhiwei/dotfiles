@@ -44,10 +44,8 @@ alias tf='terraform'
 alias af='ec2-fzf'
 alias dent='docker run -it --entrypoint'
 alias b='bazel'
-alias bzl='bazelisk'
+# alias bzl='bazelisk'
 alias cloudo='./cloud/scripts/run_cloud_process.sh -p'
-
-[ -n `command -v fd` ] && alias find='fd'
 
 dcl() {
   bazel run //depclean clean $@
@@ -72,3 +70,4 @@ $@
 }
 
 alias t='temporal'
+alias deflake='bazel test --runs_per_test=25'
