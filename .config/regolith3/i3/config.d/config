@@ -51,15 +51,17 @@ workspace_auto_back_and_forth yes
 bindsym $mod+Shift+q kill
 
 ## Screenshot // Area to clipboard // Print ##
-bindsym Print exec --no-startup-id ~/.config/regolith3/screenshot.sh
-# bindsym Print exec gnome-screenshot -ca 
+# For some reason gnome-screenshot --clipboard doesn't work. This script wraps a stackoverflow answer relying on xclip
+bindsym Print exec --no-startup-id ~/.config/regolith3/screenshot.sh --area
+
 ## Screenshot // Area to file // <Ctrl> Print ##
 bindsym ctrl+Print exec gnome-screenshot -a 
-#
+
 ## Screenshot // Window to clipboard // <Shift> Print ##
-bindsym Shift+Print exec gnome-screenshot -cw 
+bindsym Shift+Print exec --no-startup-id ~/.config/regolith3/screenshot.sh --window
+
 ## Screenshot // Window to file // <Ctrl><Shift> Print ##
-bindsym ctrl+Shift+Print exec gnome-screenshot -cw 
+bindsym ctrl+Shift+Print exec gnome-screenshot -w 
 
 ## Screenshot // Interactive //  <> Print ##
 bindsym $mod+Print exec gnome-screenshot -i
