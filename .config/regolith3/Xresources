@@ -1,0 +1,6 @@
+regolith.look.path: /usr/share/regolith-look/ayu-mirage
+# Can be disabled by having empty values for image and color
+#regolith.wallpaper.file: ~/Pictures/Wallpapers/sakura.jpeg
+regolith.wallpaper.file: ~/Pictures/Wallpapers/poppy.png
+regolith.wallpaper.options: zoom
+wm.bar.tray_output: primary
