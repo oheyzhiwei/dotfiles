@@ -70,4 +70,5 @@ $@
 }
 
 alias t='temporal'
-alias deflake='bazel test --runs_per_test=25'
+alias deflake='bazel test --cache_test_results=no --runs_per_test=16'
+alias get_access_editor='./ignored/get_access.sh editor'

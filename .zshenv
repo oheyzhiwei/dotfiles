@@ -116,3 +116,7 @@ export PATH="$CHROME_HOME/bin:$PATH"
 # -- added by dart_proto_setup.sh --
 # -- added by 02_pyenv_setup_bash.sh --
 which pyenv > /dev/null || export PATH="$HOME/.pyenv/bin:$PATH"
+
+# Mainly for be release script
+export WORKSPACE=/home/zhiwei/code
+export DATAWORKS=$WORKSPACE/dataworks

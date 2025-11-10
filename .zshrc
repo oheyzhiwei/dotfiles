@@ -59,12 +59,23 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 _fzf_complete_bazel() {
   _fzf_complete --prompt="bazel> " -- "$@" < <(
-  bazel query --noshow_progress --keep_going '//... -//experimental/...'
+  bazel query --noshow_progress --keep_going '//... -//experimental/...' | grep -v '//:\.'
   ) 
 }
 _fzf_complete_b() {
   _fzf_complete --prompt="bazel> " -- "$@" < <(
-  bazel query --noshow_progress --keep_going '//... -//experimental/...'
+  bazel query --noshow_progress --keep_going '//... -//experimental/...' | grep -v '//:\.'
+  ) 
+}
+
+_fzf_complete_cloudo() {
+  _fzf_complete --prompt="cloudo> " -- "$@" < <(
+  bazel query --noshow_progress --keep_going '//... -//experimental/...' | grep -v '//:\.'
+  ) 
+}
+_fzf_complete_dcl() {
+  _fzf_complete --prompt="depclean> " -- "$@" < <(
+  bazel query --noshow_progress --keep_going '//... -//experimental/...' | grep -v '//:\.' | awk -F: '{print $1 "/..."}' | sort -u
   ) 
 }
 

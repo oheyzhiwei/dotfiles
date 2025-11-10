@@ -2,3 +2,6 @@
 ignored
 venv
 proto-gen
+.envrc
+.aider*
+human-be-tokens.sh
