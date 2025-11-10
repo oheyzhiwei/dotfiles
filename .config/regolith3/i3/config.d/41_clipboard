@@ -1,0 +1,4 @@
+## Clipboard // Manager // <> p
+
+exec_always --no-startup-id greenclip daemon
+bindsym $mod+p exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard 
