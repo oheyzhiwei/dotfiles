@@ -10,7 +10,7 @@ if ! [ -d "$HOME/dotfiles" ]; then
     sudo apt-get install git
   fi
 
-  git clone --no-checkout https://github.com/zweicoder/dotfiles.git
+  git clone --no-checkout https://github.com/oheyzhiwei/dotfiles.git
   cd ~/dotfiles
   git config core.worktree "../../"
   # Now, we can explicitly checkout the files. Again, we need to force git to overwrite our current files. 
@@ -29,8 +29,7 @@ fi
 
 echo -n 'Install CLI awesomeness? Y/n '
 read make_cli_great_again
-if [ "${make_cli_great_again,,}" == 'y' ];
-then
+if [ "${make_cli_great_again,,}" == 'y' ]; then
   mkdir -p /tmp/dotfiles/ || true
   # Install zsh
   if [ -z `command -v zsh` ]; then
@@ -53,14 +52,13 @@ then
   echo '  Installing fonts...'
   echo '======================================================='
   sudo apt install fonts-powerline
-  # Not sure if this is needed anymore
-  # mkdir -p ~/.local/share/fonts
-  # cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
-  # fc-cache -fv
+  # Still need to logout after installing fonts
+  mkdir -p ~/.local/share/fonts
+  cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/refs/heads/master/patched-fonts/DroidSansMono/DroidSansMNerdFontPropo-Regular.otf
+  fc-cache -fv
 
 
-  if ! [ -d "$HOME/.nvm" ];
-  then
+  if ! [ -d "$HOME/.nvm" ]; then
     echo '======================================================='
     echo '  Installing nvm...'
     echo '======================================================='
@@ -72,8 +70,7 @@ then
     echo 'Successfully installed nvm. Make sure the bin path in ~/.zshenv is same as node version for bins to work'
   fi
 
-  if [ -z `command -v fd` ];
-  then
+  if [ -z `command -v fd` ]; then
     echo '======================================================='
     echo '  Installing fd...'
     echo '======================================================='

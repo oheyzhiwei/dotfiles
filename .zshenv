@@ -4,27 +4,15 @@ export PATH="$HOME/go/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-# Android studio
-export PATH="$HOME/Applications/android-studio/bin:$PATH"
-# Maven
-export PATH="$HOME/Applications/apache-maven-3.8.5/bin:$PATH"
 # gCloud
 export PATH="$HOME/Applications/google-cloud-sdk/bin:$PATH"
-# Flutter
-export FLUTTER_DIR="$HOME/.flutter"
-export PATH="$FLUTTER_DIR/flutter/bin:$FLUTTER_DIR/bin:$FLUTTER_DIR/bin/cache/dart-sdk/bin:$HOME/.pub-cache/bin:$PATH"
-export PROTOC_HOME="$HOME/.protoc"
-export PATH="$PROTOC_HOME/bin:$PATH"
 
-# Android
-export ANDROID_HOME="$HOME/.android"
-export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 # Temporal
 export PATH="$HOME/.temporalio/bin:$PATH"
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init --path)"
 
 # export JAVA_HOME="$HOME/Applications/android-studio/jre"
 export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
@@ -108,15 +96,3 @@ function yarn(){
 # 	pip $@
 # }
 
-# -- added by android_setup_ubuntu.sh --
-# -- added by chrome_setup_ubuntu.sh --
-export CHROME_HOME="$HOME/.chrome"
-export PATH="$CHROME_HOME/bin:$PATH"
-# -- added by flutter_setup_ubuntu.sh --
-# -- added by dart_proto_setup.sh --
-# -- added by 02_pyenv_setup_bash.sh --
-which pyenv > /dev/null || export PATH="$HOME/.pyenv/bin:$PATH"
-
-# Mainly for be release script
-export WORKSPACE=/home/zhiwei/code
-export DATAWORKS=$WORKSPACE/dataworks

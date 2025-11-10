@@ -44,18 +44,12 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 
-
-eval "$(pyenv init -)"
-
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
 
 # Bazel completion
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
-
-# What could go wrong?
-# eval "$(github-copilot-cli alias -- "$0")"
 
 _fzf_complete_bazel() {
   _fzf_complete --prompt="bazel> " -- "$@" < <(
@@ -79,8 +73,8 @@ _fzf_complete_dcl() {
   ) 
 }
 
-if [ -n "command -v temporal" ]; then source <(temporal completion zsh); fi
-if [ -n "command -v direnv" ]; then eval "$(direnv hook zsh)"; fi
+if [ -n "$(command -v temporal)" ]; then source <(temporal completion zsh); fi
+if [ -n "$(command -v direnv)" ]; then eval "$(direnv hook zsh)"; fi
 
 # -- added by 02_pyenv_setup_bash.sh --
 which pyenv > /dev/null && eval "$(pyenv init -)"

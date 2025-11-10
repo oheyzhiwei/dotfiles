@@ -1,10 +1,10 @@
 [user]
 	name = Zhi Wei Chong
-	email = zhiwei@artafinance.com
-	signingkey = AF2C74EF8B5E87CCA66CCE405F650582B6FAD743
+	email = oheyzhiwei@gmail.com
+	; signingkey = AF2C74EF8B5E87CCA66CCE405F650582B6FAD743
 [core]
     autocrlf = input
-	excludesfile = /home/zhiwei/.gitignore
+    excludesfile = /home/zhiwei/.gitignore
     #pager = diff-so-fancy | less -F -X
     # pager = delta
     editor = vim
@@ -30,7 +30,7 @@
 
 [push]
     default = simple
-	autosetupremote = true
+    autosetupremote = true
 [color "diff"]
     old = red strike
     new = green italic
@@ -55,8 +55,8 @@
     rbo= "!f() { git rebase -i --onto \"$1\" $(git merge-base \"$1\" HEAD); }; f"
 
 
-[commit]
-	gpgsign = true
+; [commit]
+; 	gpgsign = true
 [fetch]
 	prune = true
 [pull]
