@@ -1,3 +1,4 @@
+# TODO: Unused right now, but maybe should?
 # Configure monitor positions
 xrandr --output HDMI-1-1 --auto --above eDP-1-1
 xrandr --output HDMI-1-1 --primary
