@@ -87,3 +87,7 @@ if [ -f '/home/zhiwei/code/google-cloud-sdk/path.zsh.inc' ]; then . '/home/zhiwe
 if [ -f '/home/zhiwei/code/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/zhiwei/code/google-cloud-sdk/completion.zsh.inc'; fi
 # -- added by kubectl_setup_bash.sh --
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

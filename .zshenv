@@ -19,10 +19,10 @@ export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
 export GPG_TTY=$(tty)
 
 # NVM
-# Hard code default to lts/carbon bin folder for spacemacs / CLI tools.
+# Hard code default to bin folder for spacemacs / CLI tools.
 # This means node and other CLI tools will use this version until nvm is initialized
 # Use `nvm which node`
-export NVMBIN=$HOME/.nvm/versions/node/v18.12.1/bin/node
+export NVMBIN=$HOME/.nvm/versions/node/v24.11.0/bin/node
 
 export PATH=$PATH:$NVMBIN
 # Setup lazy loading for nvm
