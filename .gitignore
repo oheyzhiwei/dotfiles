@@ -5,3 +5,6 @@ proto-gen
 .envrc
 .aider*
 human-be-tokens.sh
+.github/PULL_REQUEST_TEMPLATE.md
+GEMINI.personal.md
+*.private.md

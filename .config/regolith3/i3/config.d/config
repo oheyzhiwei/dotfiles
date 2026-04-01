@@ -61,7 +61,9 @@ bindsym ctrl+Shift+Print exec gnome-screenshot -w
 ## Screenshot // Interactive //  <> Print ##
 bindsym $mod+Print exec gnome-screenshot -i
 
-# Media player controls
+## Clipboard // Manager // <> p
+bindsym $mod+p exec diodon
+
 bindsym $alt+ctrl+period exec playerctl next
 bindsym $alt+ctrl+comma exec playerctl previous
 bindsym $alt+ctrl+space exec playerctl play-pause
@@ -140,10 +142,20 @@ mode $mode_mark {
 
 
 
+## [Print Mode] Screenshot and screen recording
+set $mode_prnt "[PRNT] (p)screenshot (r)ecord"
+mode $mode_prnt {
+  bindsym p exec --no-startup-id ~/.config/regolith3/screenshot.sh --area, mode "default"
+  bindsym r exec --no-startup-id simplescreenrecorder, mode "default"
+
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+
 ## [SPC Mode] Access to other modes via mnemonic keys
 # Load stylesheet if exists
 set_from_resource $ilia.stylesheet ilia.stylesheet
-set $mode_spc "[SPC] (m)ark e(x)ec (i)3 (SPC)launch (j)ump (r)esize (f)ind window"
+set $mode_spc "[SPC] (m)ark e(x)ec (i)3 (SPC)launch (j)ump (r)esize (f)ind window (p)rint"
 mode $mode_spc {
 # ilia stopped working in later ubuntu versions, so we setup rofi instead
   # bindsym space exec --no-startup-id ilia -p apps -t $ilia.stylesheet, mode "default"
@@ -158,6 +170,7 @@ mode $mode_spc {
     bindsym r mode "resize"
     bindsym i mode $mode_i3
     bindsym m mode $mode_mark
+    bindsym p mode $mode_prnt
 
     bindsym Escape mode "default"
 }

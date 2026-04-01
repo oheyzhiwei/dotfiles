@@ -8,3 +8,8 @@ logs
 proto_gen
 *.ipynb
 bazel-*
+.tmux
+.pub-cache
+.fzf
+.cursor
+.cache

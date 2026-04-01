@@ -149,3 +149,7 @@ node_modules
 proto-gen
 
 .openapi-generator*
+.pub-cache
+.tmux
+
+**/GEMINI.personal.md
