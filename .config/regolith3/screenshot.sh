@@ -1,4 +1,5 @@
 #!/bin/bash
+# Screenshot to clipboard
 
 FILE=$(mktemp /tmp/screenshot-XXXXXX.png)
 FLAGS=$1

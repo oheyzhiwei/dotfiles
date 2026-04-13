@@ -8,3 +8,4 @@ human-be-tokens.sh
 .github/PULL_REQUEST_TEMPLATE.md
 GEMINI.personal.md
 *.private.md
+.turbo/cache

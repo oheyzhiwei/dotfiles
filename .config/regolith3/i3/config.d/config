@@ -49,17 +49,14 @@ bindsym $mod+Shift+q kill
 # For some reason gnome-screenshot --clipboard doesn't work. This script wraps a stackoverflow answer relying on xclip
 bindsym Print exec --no-startup-id ~/.config/regolith3/screenshot.sh --area
 
-## Screenshot // Area to file // <Ctrl> Print ##
-bindsym ctrl+Print exec gnome-screenshot -a 
-
 ## Screenshot // Window to clipboard // <Shift> Print ##
 bindsym Shift+Print exec --no-startup-id ~/.config/regolith3/screenshot.sh --window
 
-## Screenshot // Window to file // <Ctrl><Shift> Print ##
-bindsym ctrl+Shift+Print exec gnome-screenshot -w 
+## Screenshot // Area to file // <Ctrl> Print ##
+bindsym ctrl+Print exec --no-startup-id gnome-screenshot -a
 
-## Screenshot // Interactive //  <> Print ##
-bindsym $mod+Print exec gnome-screenshot -i
+## Screenshot // Window to file // <Ctrl><Shift> Print ##
+bindsym ctrl+Shift+Print exec --no-startup-id gnome-screenshot -w
 
 ## Clipboard // Manager // <> p
 bindsym $mod+p exec diodon
@@ -143,10 +140,13 @@ mode $mode_mark {
 
 
 ## [Print Mode] Screenshot and screen recording
-set $mode_prnt "[PRNT] (p)screenshot (r)ecord"
+set $mode_prnt "[PRNT] (p)area→clip (P)window→clip (C-p)area→file (C-P)window→file (r)ecord"
 mode $mode_prnt {
-  bindsym p exec --no-startup-id ~/.config/regolith3/screenshot.sh --area, mode "default"
-  bindsym r exec --no-startup-id simplescreenrecorder, mode "default"
+  bindsym p           exec --no-startup-id ~/.config/regolith3/screenshot.sh --area, mode "default"
+  bindsym Shift+p     exec --no-startup-id ~/.config/regolith3/screenshot.sh --window, mode "default"
+  bindsym ctrl+p      exec --no-startup-id gnome-screenshot -a, mode "default"
+  bindsym ctrl+Shift+p exec --no-startup-id gnome-screenshot -w, mode "default"
+  bindsym r           exec --no-startup-id simplescreenrecorder, mode "default"
 
   bindsym Return mode "default"
   bindsym Escape mode "default"

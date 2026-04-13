@@ -54,6 +54,7 @@
     oops = reset --soft HEAD~1
     fuck = reset --hard
     rbo= "!f() { git rebase -i --onto \"$1\" $(git merge-base \"$1\" HEAD); }; f"
+    wta = "!git-worktree-add"
 
 
 ; [commit]
