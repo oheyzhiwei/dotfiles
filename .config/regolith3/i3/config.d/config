@@ -58,13 +58,10 @@ bindsym ctrl+Print exec --no-startup-id gnome-screenshot -a
 ## Screenshot // Window to file // <Ctrl><Shift> Print ##
 bindsym ctrl+Shift+Print exec --no-startup-id gnome-screenshot -w
 
-## Clipboard // Manager // <> p
-bindsym $mod+p exec diodon
-
 bindsym $alt+ctrl+period exec playerctl next
 bindsym $alt+ctrl+comma exec playerctl previous
 bindsym $alt+ctrl+space exec playerctl play-pause
-bindsym $alt+ctrl+enter exec playerctl play-pause
+bindsym $alt+ctrl+Return exec playerctl play-pause
 ##==== End Key Bindings
 
 ##===== Modes
@@ -155,7 +152,7 @@ mode $mode_prnt {
 ## [SPC Mode] Access to other modes via mnemonic keys
 # Load stylesheet if exists
 set_from_resource $ilia.stylesheet ilia.stylesheet
-set $mode_spc "[SPC] (m)ark e(x)ec (i)3 (SPC)launch (j)ump (r)esize (f)ind window (p)rint"
+set $mode_spc "[SPC] (m)ark e(x)ec (i)3 (SPC)launch (j)ump (r)esize (f)ind window (p)rint (n)ame"
 mode $mode_spc {
 # ilia stopped working in later ubuntu versions, so we setup rofi instead
   # bindsym space exec --no-startup-id ilia -p apps -t $ilia.stylesheet, mode "default"
@@ -164,15 +161,17 @@ mode $mode_spc {
   bindsym space exec --no-startup-id rofi -show drun, mode "default"
   bindsym f exec --no-startup-id rofi -show window, mode "default"
 
-    bindsym x exec i3-input -F '%s' -P 'Command: '
+  # bindsym x exec i3-input -F '%s; mode "default"' -P 'Command: '
+  bindsym x exec "i3-input -P 'Command: ' -F '%s, mode default'"
+  bindsym n exec i3-input -P 'New name: ' -F 'rename workspace to %s'; mode default
 
-    bindsym Shift+s mode $mode_system
-    bindsym r mode "resize"
-    bindsym i mode $mode_i3
-    bindsym m mode $mode_mark
-    bindsym p mode $mode_prnt
+  bindsym Shift+s mode $mode_system
+  bindsym r mode "resize"
+  bindsym i mode $mode_i3
+  bindsym m mode $mode_mark
+  bindsym p mode $mode_prnt
 
-    bindsym Escape mode "default"
+  bindsym Escape mode "default"
 }
 bindsym $mod+space mode $mode_spc
 
