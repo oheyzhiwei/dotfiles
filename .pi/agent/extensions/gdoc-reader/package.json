@@ -1,0 +1,6 @@
+{
+  "name": "gdoc-reader",
+  "pi": {
+    "extensions": ["./index.ts"]
+  }
+}

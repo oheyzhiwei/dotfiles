@@ -1,0 +1,14 @@
+{
+  "prefix": "ctrl+x",
+  "timeout": 3000,
+  "bindings": {
+    "p":       { "action": "yank",          "description": "Yank (paste from kill ring)" },
+    "e":       { "action": "externalEditor","description": "Edit in external editor"    },
+    "m":       { "action": "selectModel",   "description": "Models (/models)"           },
+    "t":       { "action": "cycleThinking", "description": "Cycle thinking level"        },
+    "shift+t": { "action": "selectThinking","description": "Pick thinking level"         },
+    "n":       { "action": "newSession",    "description": "New session"                 },
+    "f":       { "action": "fork",          "description": "Fork session"                },
+    "c":       { "action": "compact",       "description": "Compact session"             }
+  }
+}

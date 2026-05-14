@@ -1,0 +1,14 @@
+# Secrets
+auth.json
+
+# Session logs (conversation history - large JSONL files)
+sessions/
+
+# Downloaded binaries managed by pi
+bin/
+
+# Credentials etc that should not be tracked
+secrets/
+
+# Local settings
+settings.json
