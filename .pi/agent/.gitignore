@@ -12,3 +12,9 @@ secrets/
 
 # Local settings
 settings.json
+
+# Run history
+run-history.jsonl
+
+# dont know what's in here
+npm

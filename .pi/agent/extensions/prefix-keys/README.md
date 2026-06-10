@@ -20,6 +20,16 @@ These are implementation notes and gotchas to make future edits safer.
 - For model selector, use app action handler directly in the custom editor:
   - `this.actionHandlers.get("app.model.select")?.()`
 
+### 1b) Do not use `pi.sendUserMessage("/some-command")` for immediate local actions
+- Even for extension commands, routing through `pi.sendUserMessage()` is the wrong pattern when the intent is an immediate local side effect from a prefix-key action.
+- It queues a user message into the agent/session flow instead of directly running local extension logic.
+- This is especially wrong for utilities like clipboard cleanup, where the user expects the action to happen immediately and not be delivered as conversational text.
+- Prefer one of these patterns instead:
+  - call the local function directly from the prefix-key action
+  - add a dedicated action type in `prefix-keys`
+  - use `actionHandlers` for native app actions
+- Only use the existing `command` action for cases where you intentionally want command routing through pi's normal message/command flow.
+
 ### 2) Action handler keys must use full app keybinding names
 Use keys from pi keybindings (not shorthand names), e.g.:
 - `app.model.select` (model picker)

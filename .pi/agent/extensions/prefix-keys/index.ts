@@ -55,6 +55,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { CustomEditor, DynamicBorder } from "@mariozechner/pi-coding-agent";
+import { runClipfix } from "../clipfix";
 import type { KeybindingsManager } from "@mariozechner/pi-coding-agent";
 import { Container, matchesKey, type SelectItem, SelectList, Text, TUI, truncateToWidth } from "@mariozechner/pi-tui";
 import type { EditorTheme } from "@mariozechner/pi-tui";
@@ -77,6 +78,7 @@ type ActionType =
 	| "newSession"
 	| "fork"
 	| "compact"
+	| "clipfix"
 	| "command";
 
 interface Binding {
@@ -125,6 +127,7 @@ const DEFAULT_CONFIG: PrefixKeysConfig = {
 		n: { action: "newSession", description: "New session" },
 		f: { action: "fork", description: "Fork session" },
 		c: { action: "compact", description: "Compact session" },
+		y: { action: "clipfix", description: "Clean clipboard text" },
 	},
 };
 
@@ -306,6 +309,10 @@ async function executeAppAction(binding: Binding, ctx: ExtensionContext, pi: Ext
 
 		case "compact":
 			ctx.compact();
+			break;
+
+		case "clipfix":
+			await runClipfix(ctx);
 			break;
 
 		case "command":

@@ -37,10 +37,28 @@ any time by re-running `orchestrate.sh`.
 
 Decompose the PRD into a journal file at `[feature-dir]/tasks.yaml`.
 
+### Lean-field rule
+
+Keep task metadata lean and non-duplicative, but always include the project
+working directory for clarity.
+
+- Do **not** create multiple fields that restate the same thing in slightly
+  different words.
+- If the source row number already appears in `id` (for example `ARTA-023`), do
+  **not** add a separate `source_id` unless the user explicitly asks for it.
+- Always include `project_dir` at the top level so an agent knows which part
+  of the repo the queue applies to.
+- For simple queue/backlog outputs, prefer just:
+  - top-level: `project`, `project_dir`, `source` (optional), `tasks`
+  - per-task: `id`, `status`, `priority`, `title`, `summary`, `fix`
+- Only add extra fields when they drive automation or the user explicitly wants
+  them.
+
 ### Schema
 
 ```yaml
 project: "Project Name"
+project_dir: "path/from-repo-root/to/project"
 prd: "path/to/PRD.md"
 goal: >
   One-paragraph description of what this feature delivers, written for an
@@ -96,6 +114,34 @@ Order by dependency, then by implementation layer:
 
 Every task's `depends_on` must list only tasks with lower positions in the
 list. No task may depend on a task that comes after it.
+
+### Queue-only variant
+
+When the user asks for a lightweight task queue rather than the full
+plan/execute journal, emit this lean schema:
+
+```yaml
+project: "Project Name"
+project_dir: "path/from-repo-root/to/project"
+source: "optional source file or URL"
+tasks:
+  - id: "ARTA-023"
+    status: "todo"
+    priority: "P1"
+    title: "Display ARTA version"
+    summary: "Show the dashboard version clearly so QA can reference the build."
+    fix: |
+      There is already a version number being displayed using the date and
+      supposedly the commit hash. Render it explicitly as
+      `version: {var}` and debug why the git hash is missing in builds.
+```
+
+Use the full journal schema only when the user wants orchestration with
+planning, approvals, work logs, and handovers.
+
+`project_dir` is required in both the full journal and the queue-only variant.
+It should point to the intended working directory relative to the repo root so
+future agents know where to start.
 
 ### Task sizing
 
@@ -293,8 +339,10 @@ proposed_task_changes: []
 ## Checklist Before Saving the Journal
 
 - [ ] `goal` gives enough context for an agent that hasn't read the PRD
+- [ ] `project_dir` is present and clearly identifies the working directory relative to repo root
 - [ ] Tasks ordered by dependency (infra → schema → backend → frontend → tests)
 - [ ] Every task's `depends_on` references only earlier tasks
+- [ ] Task metadata is lean; no duplicate fields like `source_id`, `reported_issue`, or extra summaries unless explicitly requested
 - [ ] Task descriptions are specific enough for the plan agent to scope correctly
 - [ ] `proposed_task_changes: []` initialised
 - [ ] All `status`, `plan`, `plan_notes`, `handover` fields initialised to `""`
