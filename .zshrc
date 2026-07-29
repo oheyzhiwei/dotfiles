@@ -47,6 +47,9 @@ export ERL_AFLAGS="-kernel shell_history enabled"
 # add Pulumi to the PATH
 export PATH=$PATH:$HOME/.pulumi/bin
 
+# machine tooling (e.g. `mapps` — expose dev ports at /apps; see ~/machine/README.md)
+export PATH=$PATH:$HOME/machine/bin
+
 # Bazel completion
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache

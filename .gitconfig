@@ -1,9 +1,8 @@
 [user] 
-    name = Zhi Wei Chong
+	name = zhiwei
     email = zhiwei@artafinance.com
 	; email = oheyzhiwei@gmail.com
   ; signingkey = 5F650582B6FAD743 
-    signingkey = AF2C74EF8B5E87CCA66CCE405F650582B6FAD743
 [core]
     autocrlf = input
     excludesfile = /home/zhiwei/.gitignore
@@ -59,7 +58,7 @@
 
 
 [commit]
-	gpgsign = true
+	gpgsign = false
 [fetch]
 	prune = true
 [pull]

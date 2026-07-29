@@ -1,0 +1,54 @@
+#!/bin/sh
+# Send stdin to the clipboard of the machine you are sitting at.
+#
+#   tmux-clip            copy stdin verbatim
+#   tmux-clip --trim     strip trailing whitespace from every line and collapse
+#                        runs of blank lines (Claude Code and other TUIs pad
+#                        every line out to the full pane width with real space
+#                        cells, which otherwise land in the clipboard)
+#
+# Two backends, both attempted:
+#   1. OSC 52 via tmux -- works in kitty / wezterm / ghostty / alacritty /
+#      iTerm2. Silently ignored by GNOME Terminal (VTE never implemented it).
+#   2. xclip over the ssh-forwarded X11 display -- the path that actually
+#      works from GNOME Terminal.
+#
+# DISPLAY is re-read from the tmux session environment on every invocation.
+# That matters: the tmux server keeps the DISPLAY from whichever ssh session
+# started it, so after a detach/re-attach the inherited value points at a dead
+# forwarding channel. tmux refreshes the session env on attach (see the
+# update-environment option), so asking tmux is always current.
+
+trim=0
+case "$1" in
+  --trim|-t) trim=1 ;;
+esac
+
+buf=$(cat)
+
+if [ "$trim" = 1 ]; then
+  buf=$(printf '%s\n' "$buf" | sed -e 's/[[:space:]]*$//' | cat -s)
+fi
+
+[ -z "$buf" ] && exit 0
+
+# --- backend 1: OSC 52 -------------------------------------------------------
+if [ -n "$TMUX" ]; then
+  printf '%s' "$buf" | tmux load-buffer -w - 2>/dev/null
+fi
+
+# --- backend 2: xclip over forwarded X11 -------------------------------------
+command -v xclip >/dev/null 2>&1 || exit 0
+
+d=$(tmux show-environment DISPLAY 2>/dev/null | sed -n 's/^DISPLAY=//p')
+[ -z "$d" ] && d=$(tmux show-environment -g DISPLAY 2>/dev/null | sed -n 's/^DISPLAY=//p')
+[ -n "$d" ] && DISPLAY=$d && export DISPLAY
+
+x=$(tmux show-environment XAUTHORITY 2>/dev/null | sed -n 's/^XAUTHORITY=//p')
+[ -n "$x" ] && XAUTHORITY=$x && export XAUTHORITY
+
+[ -z "$DISPLAY" ] && exit 0
+
+# xclip forks and holds selection ownership until something else claims it.
+printf '%s' "$buf" | xclip -selection clipboard -i >/dev/null 2>&1 &
+exit 0
