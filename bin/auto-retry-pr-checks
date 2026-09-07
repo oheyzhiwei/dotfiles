@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Re-run failed required checks on my open pull requests.
+
+Polls my open, non-draft PRs and re-runs any required check that is failing,
+giving up after MAX_ATTEMPTS and notifying instead.  Intended to be driven by a
+systemd timer; safe to run repeatedly.
+
+The attempt budget is keyed to the PR's head commit, so pushing new code starts
+a fresh budget -- old failures say nothing about new code.
+
+To exempt a PR, label it `no-ci-retry`.
+
+Notifications go out via `~/bin/notify`, which owns the channel configuration.
+"""
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+DEFAULT_REPO = 'Arbo-Works/dataworks'
+EXEMPT_LABEL = 'no-ci-retry'
+NO_REQUIRED_CHECKS = 'no required checks reported'
+CANNOT_RERUN = 'cannot be rerun'
+
+NOTIFY_CMD = Path.home() / 'bin/notify'
+STATE_PATH = Path.home() / '.local/state/auto-retry-pr-checks/state.json'
+LOG_PATH = Path.home() / '.local/state/auto-retry-pr-checks/decisions.log'
+
+# A cancelled check is almost always a run superseded by a newer push, not a
+# flake; those come back on the new head commit under a fresh budget anyway.
+RETRYABLE_STATES = {'FAILURE', 'TIMED_OUT', 'STARTUP_FAILURE'}
+
+RUN_ID_IN_LINK = re.compile(r'/runs/(\d+)')
+
+
+def gh_json(args: list[str]) -> list[dict]:
+    result = subprocess.run(['gh', *args], capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f'gh {" ".join(args)} failed: {result.stderr.strip()}')
+    return json.loads(result.stdout or '[]')
+
+
+def open_prs(repo: str) -> list[dict]:
+    return gh_json([
+        'pr', 'list', '--repo', repo, '--author', '@me', '--state', 'open',
+        '--draft=false', '--limit', '50', '--json', 'number,title,url,headRefOid,labels'
+    ])
+
+
+def failing_required_checks(repo: str, pr_number: int) -> list[dict]:
+    """Latest run per (workflow, name), keeping only the ones that ended badly.
+
+    Check names collide across workflows -- `run_bazel_tests` exists in both
+    bazel-test-them-all and its buildfarm variant -- so the workflow is part of
+    the identity.
+    """
+    result = subprocess.run([
+        'gh', 'pr', 'checks',
+        str(pr_number), '--repo', repo, '--required', '--json',
+        'name,workflow,bucket,state,link,completedAt'
+    ], capture_output=True, text=True)
+    if result.returncode != 0:
+        # A just-opened PR has no checks registered yet, which gh calls an error.
+        if NO_REQUIRED_CHECKS in result.stderr:
+            return []
+        raise RuntimeError(f'gh pr checks {pr_number}: {result.stderr.strip()}')
+    checks = json.loads(result.stdout or '[]')
+
+    latest: dict[tuple[str, str], dict] = {}
+    for check in checks:
+        key = (check['workflow'], check['name'])
+        previous = latest.get(key)
+        if previous is None or (check.get('completedAt') or '') >= (previous.get('completedAt') or ''):
+            latest[key] = check
+
+    return [c for c in latest.values() if c['state'] in RETRYABLE_STATES]
+
+
+def run_id_of(check: dict) -> str | None:
+    match = RUN_ID_IN_LINK.search(check.get('link') or '')
+    return match.group(1) if match else None
+
+
+def load_json(path: Path, default: dict) -> dict:
+    try:
+        return json.loads(path.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return default
+
+
+def log(message: str) -> None:
+    stamp = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    print(message)
+    with LOG_PATH.open('a') as handle:
+        handle.write(f'{stamp} {message}\n')
+
+
+def notify(title: str, body: str, click: str) -> None:
+    log(f'NOTIFY {title} -- {body}')
+    result = subprocess.run(
+        [str(NOTIFY_CMD), '-t', title, '-c', click, '-p', '4', body],
+        capture_output=True, text=True)
+    if result.returncode != 0:
+        log(f'ERROR notify failed: {result.stderr.strip()}')
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--repo', default=DEFAULT_REPO)
+    parser.add_argument('--max-attempts', type=int, default=3,
+                        help='re-runs allowed per check per head commit (default: 3)')
+    parser.add_argument('--max-reruns-per-cycle', type=int, default=10,
+                        help='ceiling on re-runs triggered in one pass, so a bug here '
+                             'cannot storm CI (default: 10)')
+    parser.add_argument('-n', '--dry-run', action='store_true')
+    args = parser.parse_args()
+
+    state = load_json(STATE_PATH, {'attempts': {}, 'notified': []})
+    attempts: dict[str, int] = state.get('attempts', {})
+    notified: set[str] = set(state.get('notified', []))
+
+    prs = open_prs(args.repo)
+    live_prefixes = {f'{pr["number"]}/{pr["headRefOid"]}/' for pr in prs}
+
+    reruns_this_cycle = 0
+    runs_already_kicked: set[str] = set()
+
+    for pr in prs:
+        labels = {pr_label['name'] for pr_label in pr.get('labels', [])}
+        if EXEMPT_LABEL in labels:
+            continue
+
+        try:
+            failures = failing_required_checks(args.repo, pr['number'])
+        except RuntimeError as error:
+            # One unreadable PR must not strand the PRs queued behind it.
+            log(f'ERROR PR #{pr["number"]}: {error}')
+            continue
+
+        for check in failures:
+            key = f'{pr["number"]}/{pr["headRefOid"]}/{check["workflow"]}/{check["name"]}'
+            used = attempts.get(key, 0)
+            check_label = f'PR #{pr["number"]} {check["workflow"]}/{check["name"]}'
+
+            if used >= args.max_attempts:
+                if key not in notified:
+                    title = f'{check_label} needs a human'
+                    body = f'Still failing after {used} re-runs.\n{check["link"]}'
+                    if args.dry_run:
+                        log(f'DRY-RUN would notify: {title} -- {body}')
+                    else:
+                        notify(title, body, pr['url'])
+                    notified.add(key)
+                continue
+
+            run_id = run_id_of(check)
+            if run_id is None:
+                log(f'SKIP {check_label}: no workflow run in link {check.get("link")!r}')
+                continue
+
+            # `--failed` re-runs every failed job in the run, so two failing
+            # checks sharing a run ride on one call -- and only that call counts
+            # against the cycle ceiling.
+            if run_id not in runs_already_kicked:
+                if reruns_this_cycle >= args.max_reruns_per_cycle:
+                    log(f'SKIP {check_label}: hit --max-reruns-per-cycle')
+                    continue
+                if not args.dry_run:
+                    result = subprocess.run(
+                        ['gh', 'run', 'rerun', run_id, '--repo', args.repo, '--failed'],
+                        capture_output=True, text=True)
+                    if result.returncode != 0:
+                        log(f'ERROR re-run of {check_label} (run {run_id}) '
+                            f'failed: {result.stderr.strip()}')
+                        # GitHub refuses to re-run past its retention window, so
+                        # retrying would bury this check instead of surfacing it.
+                        if CANNOT_RERUN in result.stderr and key not in notified:
+                            attempts[key] = args.max_attempts
+                            notify(f'{check_label} cannot be re-run',
+                                   'Too old for GitHub to re-run -- push to the '
+                                   f'branch for a fresh run.\n{check["link"]}',
+                                   pr['url'])
+                            notified.add(key)
+                        continue
+                runs_already_kicked.add(run_id)
+                reruns_this_cycle += 1
+
+            attempts[key] = used + 1
+            verb = 'DRY-RUN would re-run' if args.dry_run else 'RERUN'
+            log(f'{verb} {check_label} (attempt {used + 1}/{args.max_attempts}) run {run_id}')
+
+    if args.dry_run:
+        return 0
+
+    # Drop bookkeeping for closed PRs and superseded commits.
+    state['attempts'] = {k: v for k, v in attempts.items()
+                         if any(k.startswith(p) for p in live_prefixes)}
+    state['notified'] = sorted(n for n in notified
+                               if any(n.startswith(p) for p in live_prefixes))
+    STATE_PATH.write_text(json.dumps(state, indent=2))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
