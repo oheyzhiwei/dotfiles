@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Send a notification to whichever channels this machine has configured.
+
+A single entry point so scripts, timers and agents do not each reimplement
+delivery. ntfy is the channel in use here; slack and email are wired but unset.
+
+Config, `~/.config/notify/config.json` (mode 600 -- the ntfy topic is a secret,
+since anyone holding it can both read and publish):
+
+    {"ntfy_topic": "...",                            # required for ntfy
+     "ntfy_server": "https://ntfy.sh",               # optional
+     "slack_webhook": "https://hooks.slack.com/...", # optional
+     "email": {"username": "...", "password": "...", "to": "...",
+               "host": "smtp.gmail.com", "port": 587}}
+
+Usage:
+    notify "PR #123 is stuck"
+    notify -t "CI" -c https://github.com/x/y/pull/123 -p 4 "3 checks failed"
+    some-command 2>&1 | notify -t "backup finished"
+
+Exits non-zero if nothing was delivered, so a caller can tell silence from
+success -- an unconfigured channel used to fail invisibly.
+"""
+
+import argparse
+import json
+import smtplib
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from email.message import EmailMessage
+from pathlib import Path
+
+CONFIG_PATH = Path.home() / '.config/notify/config.json'
+LOG_PATH = Path.home() / '.local/state/notify/notify.log'
+
+
+def log(message: str) -> None:
+    stamp = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    with LOG_PATH.open('a') as handle:
+        handle.write(f'{stamp} {message}\n')
+
+
+def send_ntfy(config: dict, title: str, body: str, click: str, priority: str) -> bool:
+    topic = config.get('ntfy_topic')
+    if not topic:
+        return False
+
+    # http.client cannot put non-latin-1 bytes in a header, and titles carrying
+    # emoji (GitHub workflow names do) would otherwise raise past the handler.
+    headers = {'Title': title.encode('ascii', 'replace').decode()[:200],
+               'Priority': priority}
+    if click:
+        headers['Click'] = click
+
+    server = config.get('ntfy_server', 'https://ntfy.sh')
+    request = urllib.request.Request(f'{server}/{topic}', data=body.encode(),
+                                     headers=headers)
+    try:
+        urllib.request.urlopen(request, timeout=10).read()
+        return True
+    except (urllib.error.URLError, TimeoutError) as error:
+        log(f'ERROR ntfy: {error}')
+        return False
+
+
+def send_slack(config: dict, title: str, body: str) -> bool:
+    webhook = config.get('slack_webhook')
+    if not webhook:
+        return False
+
+    request = urllib.request.Request(
+        webhook, data=json.dumps({'text': f'*{title}*\n{body}'}).encode(),
+        headers={'Content-Type': 'application/json'})
+    try:
+        urllib.request.urlopen(request, timeout=10).read()
+        return True
+    except (urllib.error.URLError, TimeoutError) as error:
+        log(f'ERROR slack: {error}')
+        return False
+
+
+def send_email(config: dict, title: str, body: str) -> bool:
+    settings = config.get('email')
+    if not settings:
+        return False
+
+    message = EmailMessage()
+    message['Subject'] = title
+    message['From'] = settings['username']
+    message['To'] = settings['to']
+    message.set_content(body)
+    try:
+        with smtplib.SMTP(settings.get('host', 'smtp.gmail.com'),
+                          settings.get('port', 587), timeout=20) as smtp:
+            smtp.starttls()
+            smtp.login(settings['username'], settings['password'])
+            smtp.send_message(message)
+        return True
+    except (smtplib.SMTPException, OSError, KeyError) as error:
+        log(f'ERROR email: {error}')
+        return False
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('message', nargs='*', help='body; read from stdin if omitted')
+    parser.add_argument('-t', '--title', default='notification')
+    parser.add_argument('-c', '--click', default='', help='URL to open when tapped')
+    parser.add_argument('-p', '--priority', default='3', choices=list('12345'),
+                        help='ntfy priority, 1 min to 5 urgent (default: 3)')
+    args = parser.parse_args()
+
+    body = ' '.join(args.message) if args.message else sys.stdin.read().strip()
+    if not body:
+        parser.error('empty message')
+
+    try:
+        config = json.loads(CONFIG_PATH.read_text())
+    except FileNotFoundError:
+        print(f'notify: no config at {CONFIG_PATH}; nothing sent', file=sys.stderr)
+        return 1
+    except json.JSONDecodeError as error:
+        print(f'notify: bad config: {error}', file=sys.stderr)
+        return 1
+
+    delivered = [name for name, sent in (
+        ('ntfy', send_ntfy(config, args.title, body, args.click, args.priority)),
+        ('slack', send_slack(config, args.title, body)),
+        ('email', send_email(config, args.title, body)),
+    ) if sent]
+
+    if not delivered:
+        print('notify: no channel delivered; check ~/.local/state/notify/notify.log',
+              file=sys.stderr)
+        log(f'UNDELIVERED {args.title}: {body}')
+        return 1
+
+    log(f'SENT via {",".join(delivered)} -- {args.title}: {body}')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

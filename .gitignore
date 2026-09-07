@@ -9,3 +9,4 @@ human-be-tokens.sh
 GEMINI.personal.md
 *.private.md
 .turbo/cache
+.config/notify/config.json
