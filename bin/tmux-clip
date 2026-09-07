@@ -1,54 +1,79 @@
 #!/bin/sh
 # Send stdin to the clipboard of the machine you are sitting at.
 #
-#   tmux-clip            copy stdin verbatim
-#   tmux-clip --trim     strip trailing whitespace from every line and collapse
-#                        runs of blank lines (Claude Code and other TUIs pad
-#                        every line out to the full pane width with real space
-#                        cells, which otherwise land in the clipboard)
+#   tmux-clip           put stdin in the tmux buffer with -w; the
+#                       after-load-buffer hook then forwards it to the clipboard
+#   tmux-clip --to-x    write straight to the clipboard, no tmux buffer
+#                       (this is the one real clipboard writer; the hook and the
+#                       copy-mode bindings both call it)
 #
-# Two backends, both attempted:
-#   1. OSC 52 via tmux -- works in kitty / wezterm / ghostty / alacritty /
-#      iTerm2. Silently ignored by GNOME Terminal (VTE never implemented it).
-#   2. xclip over the ssh-forwarded X11 display -- the path that actually
-#      works from GNOME Terminal.
+# Why a hook instead of just writing the clipboard here: Claude Code has mouse
+# reporting enabled, so tmux forwards drag-selects to the app and the copy-mode
+# bindings never fire. Claude Code does its own copy via `tmux load-buffer -w -`
+# -- correctly asking tmux to push OSC 52, which GNOME Terminal (VTE) discards,
+# since VTE has never implemented OSC 52. Hooking after-load-buffer catches that
+# write, and every other route into a tmux buffer, in one place.
 #
-# DISPLAY is re-read from the tmux session environment on every invocation.
-# That matters: the tmux server keeps the DISPLAY from whichever ssh session
-# started it, so after a detach/re-attach the inherited value points at a dead
-# forwarding channel. tmux refreshes the session env on attach (see the
-# update-environment option), so asking tmux is always current.
+# Both paths trim: full-width TUIs pad every line out to the pane width with real
+# space cells, which otherwise land in the clipboard as trailing whitespace.
+#
+# DISPLAY is re-read from the tmux session environment on every invocation. The
+# tmux server keeps the DISPLAY of whichever ssh session started it, so after a
+# detach/re-attach the inherited value points at a dead forwarding channel; tmux
+# refreshes the session env on attach (see update-environment), so asking tmux is
+# always current.
 
-trim=0
-case "$1" in
-  --trim|-t) trim=1 ;;
-esac
+to_x=0
+[ "$1" = "--to-x" ] && to_x=1
 
 buf=$(cat)
-
-if [ "$trim" = 1 ]; then
-  buf=$(printf '%s\n' "$buf" | sed -e 's/[[:space:]]*$//' | cat -s)
-fi
-
+# strip trailing whitespace per line, then collapse runs of blank lines
+buf=$(printf '%s\n' "$buf" | sed -e 's/[[:space:]]*$//' | cat -s)
 [ -z "$buf" ] && exit 0
 
-# --- backend 1: OSC 52 -------------------------------------------------------
-if [ -n "$TMUX" ]; then
+# --- hand off to the tmux buffer and let the hook do the rest -----------------
+# -w also emits OSC 52, which costs nothing and covers terminals that support it.
+if [ "$to_x" = 0 ] && [ -n "$TMUX" ]; then
   printf '%s' "$buf" | tmux load-buffer -w - 2>/dev/null
+  exit 0
 fi
 
-# --- backend 2: xclip over forwarded X11 -------------------------------------
-command -v xclip >/dev/null 2>&1 || exit 0
+# --- the actual clipboard write ----------------------------------------------
+# Deliberately no load-buffer here: this path is what the after-load-buffer hook
+# calls, and loading a buffer would retrigger the hook forever. Copy-mode's
+# copy-pipe already fills the tmux buffer itself before piping to us.
+#
+# Backend is detected rather than hardcoded, so the same config works whether
+# tmux is running on a remote box over `ssh -X` (X11 only) or locally on a
+# Wayland or X11 desktop. Values come from tmux so they survive re-attach.
+for v in WAYLAND_DISPLAY DISPLAY XAUTHORITY XDG_RUNTIME_DIR; do
+  val=$(tmux show-environment "$v" 2>/dev/null | sed -n "s/^$v=//p")
+  [ -z "$val" ] && val=$(tmux show-environment -g "$v" 2>/dev/null | sed -n "s/^$v=//p")
+  [ -n "$val" ] && export "$v=$val"
+done
 
-d=$(tmux show-environment DISPLAY 2>/dev/null | sed -n 's/^DISPLAY=//p')
-[ -z "$d" ] && d=$(tmux show-environment -g DISPLAY 2>/dev/null | sed -n 's/^DISPLAY=//p')
-[ -n "$d" ] && DISPLAY=$d && export DISPLAY
+warn() {
+  [ -n "$TMUX" ] && tmux display-message "clipboard: $1" 2>/dev/null
+  echo "tmux-clip: $1" >&2
+}
 
-x=$(tmux show-environment XAUTHORITY 2>/dev/null | sed -n 's/^XAUTHORITY=//p')
-[ -n "$x" ] && XAUTHORITY=$x && export XAUTHORITY
+# Prefer the session's native backend; both fork and hold the selection until
+# something else claims it.
+if [ -n "$WAYLAND_DISPLAY" ] && command -v wl-copy >/dev/null 2>&1; then
+  printf '%s' "$buf" | wl-copy >/dev/null 2>&1 &
+  exit 0
+fi
 
-[ -z "$DISPLAY" ] && exit 0
+if [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
+  printf '%s' "$buf" | xclip -selection clipboard -i >/dev/null 2>&1 &
+  exit 0
+fi
 
-# xclip forks and holds selection ownership until something else claims it.
-printf '%s' "$buf" | xclip -selection clipboard -i >/dev/null 2>&1 &
-exit 0
+# Nothing worked. Say so out loud -- a silent no-op here is exactly the failure
+# mode that makes this setup look like it's working when it isn't.
+if [ -z "$WAYLAND_DISPLAY" ] && [ -z "$DISPLAY" ]; then
+  warn "no DISPLAY/WAYLAND_DISPLAY (reconnect with ssh -X?); text is in the tmux buffer, paste with prefix + ]"
+else
+  warn "install xclip (X11) or wl-clipboard (Wayland); text is in the tmux buffer, paste with prefix + ]"
+fi
+exit 1

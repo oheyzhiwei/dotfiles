@@ -282,20 +282,31 @@ run '~/.tmux/plugins/tpm/tpm'
 # `copy-selection[-and-cancel]` (or copy-pipe with its own xclip command), so
 # these survive untouched -- leave tmux_conf_copy_to_os_clipboard=false.
 
-# --trim strips the trailing space padding that Claude Code and other full-width
-# TUIs write into every cell, and collapses the resulting runs of blank lines.
-# `clip` (the bare symlink) stays byte-exact for piping real data.
+# Keep WAYLAND_DISPLAY/XDG_RUNTIME_DIR fresh on re-attach too, not just DISPLAY,
+# so the same config works when tmux runs locally on a Wayland desktop.
+set -ga update-environment WAYLAND_DISPLAY
+set -ga update-environment XDG_RUNTIME_DIR
+
+# Anything that lands in a tmux buffer gets forwarded to the laptop's clipboard.
+# This is the binding-independent catch-all: Claude Code keeps mouse reporting on,
+# so tmux hands drag-selects to the app and the copy-mode bindings below never
+# fire for it. Claude Code copies with `tmux load-buffer -w -`, so hooking
+# after-load-buffer catches its selections too.
+# --to-x never loads a buffer itself, which is what stops this recursing.
+set-hook -g after-load-buffer 'run -b "tmux show-buffer | tmux-clip --to-x"'
 
 # keyboard copy (prefix + [ to enter copy mode, v to select, y/Enter to yank)
-bind -T copy-mode-vi y     send -X copy-pipe-and-cancel 'tmux-clip --trim'
-bind -T copy-mode-vi Enter send -X copy-pipe-and-cancel 'tmux-clip --trim'
-bind -T copy-mode    M-w   send -X copy-pipe-and-cancel 'tmux-clip --trim'
+bind -T copy-mode-vi y     send -X copy-pipe-and-cancel 'tmux-clip --to-x'
+bind -T copy-mode-vi Enter send -X copy-pipe-and-cancel 'tmux-clip --to-x'
+bind -T copy-mode    M-w   send -X copy-pipe-and-cancel 'tmux-clip --to-x'
 
-# mouse: drag-select, double-click word, triple-click line -- all auto-copy
-bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel 'tmux-clip --trim'
-bind -T copy-mode    MouseDragEnd1Pane send -X copy-pipe-and-cancel 'tmux-clip --trim'
-bind -T root DoubleClick1Pane select-pane -t = \; if -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send -M } { copy-mode -H ; send -X select-word ; run -d 0.3 ; send -X copy-pipe-and-cancel 'tmux-clip --trim' }
-bind -T root TripleClick1Pane select-pane -t = \; if -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send -M } { copy-mode -H ; send -X select-line ; run -d 0.3 ; send -X copy-pipe-and-cancel 'tmux-clip --trim' }
+# mouse: drag-select, double-click word, triple-click line -- all auto-copy.
+# These only apply in panes where the app is NOT grabbing the mouse (or once
+# you're already in copy mode); in Claude Code the hook above is what fires.
+bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel 'tmux-clip --to-x'
+bind -T copy-mode    MouseDragEnd1Pane send -X copy-pipe-and-cancel 'tmux-clip --to-x'
+bind -T root DoubleClick1Pane select-pane -t = \; if -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send -M } { copy-mode -H ; send -X select-word ; run -d 0.3 ; send -X copy-pipe-and-cancel 'tmux-clip --to-x' }
+bind -T root TripleClick1Pane select-pane -t = \; if -F "#{||:#{pane_in_mode},#{mouse_any_flag}}" { send -M } { copy-mode -H ; send -X select-line ; run -d 0.3 ; send -X copy-pipe-and-cancel 'tmux-clip --to-x' }
 
 # prefix + p pastes your laptop's clipboard into the pane.
 # -p uses bracketed paste, so multi-line text arrives as one block instead of
